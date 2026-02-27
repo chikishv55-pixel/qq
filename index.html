@@ -1,5 +1,5 @@
-
-
+//8393966699:AAF9vJ4VD6pnzqT7tQnmfsTSOUHFXMjmFLE
+//1445393854
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
+        /* Все стили остаются точно такими же, как в предыдущем ответе */
         * {
             margin: 0;
             padding: 0;
@@ -27,7 +28,6 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Анимированная заставка - МОРФИНГ БУКВ (увеличенная продолжительность) */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -120,7 +120,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Основной контент */
         .main-content {
             opacity: 0;
             transition: opacity 0.8s ease;
@@ -210,7 +209,6 @@
             border: 1px solid rgba(191, 59, 44, 0.1);
         }
 
-        /* Баннеры для новостей и скидок */
         .banners-section {
             margin-bottom: 24px;
         }
@@ -267,7 +265,6 @@
             color: white;
         }
 
-        /* Вкладки */
         .tabs {
             display: flex;
             gap: 8px;
@@ -304,7 +301,6 @@
             display: none;
         }
 
-        /* Сортировка по категориям */
         .category-filter {
             display: flex;
             gap: 10px;
@@ -342,7 +338,6 @@
             transform: scale(0.95);
         }
 
-        /* Сетка товаров */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -476,7 +471,6 @@
             transform: scale(0.98);
         }
 
-        /* Корзина и избранное */
         .cart-header, .favorites-header, .orders-header {
             display: flex;
             justify-content: space-between;
@@ -791,7 +785,7 @@
     </style>
 </head>
 <body>
-    <!-- Анимированная заставка с МОРФИНГОМ БУКВ (увеличенная) -->
+    <!-- Анимированная заставка -->
     <div class="splash-screen" id="splash">
         <div class="splash-logo">
             <span class="letter">Q</span>
@@ -806,12 +800,10 @@
         <!-- Профиль -->
         <div class="profile-header" id="profileContainer"></div>
 
-        <!-- Баннеры с новостями и скидками -->
-        <div class="banners-section" id="bannersContainer">
-            <!-- будут заполнены динамически -->
-        </div>
+        <!-- Баннеры -->
+        <div class="banners-section" id="bannersContainer"></div>
 
-        <!-- Вкладки: Каталог | Корзина | ❤️ Избранное | 📦 Заказы -->
+        <!-- Вкладки -->
         <div class="tabs">
             <div class="tab active" data-tab="catalog">Каталог</div>
             <div class="tab" data-tab="cart">Корзина <span id="cart-count-badge" style="background:#000; color:white; border-radius:20px; padding:2px 8px; margin-left:6px; font-size:13px;">0</span></div>
@@ -819,11 +811,9 @@
             <div class="tab" data-tab="orders">📦 Заказы</div>
         </div>
 
-        <!-- Каталог товаров -->
+        <!-- Каталог -->
         <div id="catalog-tab" class="tab-content">
             <h2 class="section-title">Свежая коллекция QQ</h2>
-            
-            <!-- Фильтр по категориям -->
             <div class="category-filter" id="categoryFilter">
                 <button class="category-btn active" data-category="all">Все</button>
                 <button class="category-btn" data-category="футболки">Футболки</button>
@@ -833,7 +823,6 @@
                 <button class="category-btn" data-category="рубашки">Рубашки</button>
                 <button class="category-btn" data-category="кросовки">Кросовки</button>
             </div>
-            
             <div class="products-grid" id="productsGrid"></div>
         </div>
 
@@ -862,7 +851,7 @@
             <div id="favoritesItemsContainer" class="favorites-items"></div>
         </div>
 
-        <!-- История заказов -->
+        <!-- История заказов (только для продавца отображаются кнопки) -->
         <div id="orders-tab" class="tab-content hidden">
             <div class="orders-header">
                 <div class="orders-title">История заказов</div>
@@ -870,7 +859,7 @@
             <div id="ordersContainer" class="orders-items"></div>
         </div>
 
-        <div class="footer-note">QQ · морфинг букв · баннеры · сортировка</div>
+        <div class="footer-note">QQ · Все права Защищены 2026</div>
     </div>
 
     <div id="toast" class="toast-message">👍</div>
@@ -905,7 +894,10 @@
                 userError = true;
             }
 
-            // ----- ТОВАРЫ С КАТЕГОРИЯМИ (ДОБАВЬТЕ СВОИ ФОТО) -----
+            // 🔥 Проверяем, является ли текущий пользователь ПРОДАВЦОМ (ВАМИ)
+            const isSeller = user && user.id === YOUR_TELEGRAM_ID;
+
+            // ----- ТОВАРЫ С КАТЕГОРИЯМИ -----
             const products = [
                 { 
                     id: 'tshirt1', 
@@ -1009,7 +1001,7 @@
             let likedProducts = new Set();
             let cart = [];
             let orders = [];
-            let currentCategory = 'all'; // текущая выбранная категория
+            let currentCategory = 'all';
 
             // Загрузка из localStorage
             try {
@@ -1130,12 +1122,11 @@
                 `;
             }
 
-            // ----- Каталог с сортировкой по категориям -----
+            // ----- Каталог -----
             function renderProducts() {
                 const grid = document.getElementById('productsGrid');
                 if (!grid) return;
 
-                // Фильтруем товары по выбранной категории
                 let filteredProducts = products;
                 if (currentCategory !== 'all') {
                     filteredProducts = products.filter(p => p.category === currentCategory);
@@ -1177,7 +1168,6 @@
                     grid.innerHTML = cardsHtml;
                 }
 
-                // Лайки
                 document.querySelectorAll('.like-button').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -1196,7 +1186,6 @@
                     });
                 });
 
-                // Кнопки "В корзину"
                 document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -1217,7 +1206,7 @@
                 });
             }
 
-            // ----- Обработчик категорий -----
+            // ----- Категории -----
             function initCategoryFilter() {
                 const categoryBtns = document.querySelectorAll('.category-btn');
                 categoryBtns.forEach(btn => {
@@ -1227,7 +1216,6 @@
                         currentCategory = btn.dataset.category;
                         renderProducts();
                         
-                        // Показываем тост с выбранной категорией
                         const categoryNames = {
                             'all': 'Все товары',
                             'футболки': 'Футболки',
@@ -1369,6 +1357,7 @@
 
                         showToast('⏳ Заказ создан, ожидайте подтверждения', 2000);
 
+                        // Отправляем уведомление ТОЛЬКО продавцу
                         const message = `
 🛍 <b>Новый заказ в QQ!</b>
 
@@ -1459,7 +1448,7 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                 }
             }
 
-            // ----- История заказов -----
+            // ----- История заказов (с проверкой на продавца) -----
             function renderOrders() {
                 const container = document.getElementById('ordersContainer');
                 if (!container) return;
@@ -1474,11 +1463,14 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                     const statusClass = order.status === 'pending' ? 'status-pending' : 
                                        order.status === 'confirmed' ? 'status-confirmed' : 'status-sold';
                     
+                    // ⚡️ Кнопки управления видны ТОЛЬКО продавцу
                     let actionButton = '';
-                    if (order.status === 'pending') {
-                        actionButton = `<button class="confirm-order-btn" data-order-id="${order.id}" data-action="confirm">✅ Подтвердить</button>`;
-                    } else if (order.status === 'confirmed') {
-                        actionButton = `<button class="confirm-order-btn" data-order-id="${order.id}" data-action="sold">💰 Продан</button>`;
+                    if (isSeller) {
+                        if (order.status === 'pending') {
+                            actionButton = `<button class="confirm-order-btn" data-order-id="${order.id}" data-action="confirm">✅ Подтвердить</button>`;
+                        } else if (order.status === 'confirmed') {
+                            actionButton = `<button class="confirm-order-btn" data-order-id="${order.id}" data-action="sold">💰 Продан</button>`;
+                        }
                     }
 
                     html += `
@@ -1506,30 +1498,29 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
 
                 container.innerHTML = html;
 
-                container.querySelectorAll('.confirm-order-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const orderId = btn.dataset.orderId;
-                        const action = btn.dataset.action;
-                        const order = orders.find(o => o.id === orderId);
-                        
-                        if (order) {
-                            if (action === 'confirm') {
-                                order.status = 'confirmed';
-                                order.statusText = 'Подтвержден';
-                                showToast(`✅ Заказ ${orderId} подтвержден`, 1500);
-                            } else if (action === 'sold') {
-                                order.status = 'sold';
-                                order.statusText = 'Продан';
-                                showToast(`💰 Заказ ${orderId} отмечен как проданный`, 1500);
-                            }
-                            saveOrders();
+                // Обработчики кнопок (только для продавца, но проверка уже есть)
+                if (isSeller) {
+                    container.querySelectorAll('.confirm-order-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const orderId = btn.dataset.orderId;
+                            const action = btn.dataset.action;
+                            const order = orders.find(o => o.id === orderId);
                             
-                            if (order.user && order.user.username && tg) {
-                                console.log(`Уведомление для @${order.user.username}: статус заказа ${order.status}`);
+                            if (order) {
+                                if (action === 'confirm') {
+                                    order.status = 'confirmed';
+                                    order.statusText = 'Подтвержден';
+                                    showToast(`✅ Заказ ${orderId} подтвержден`, 1500);
+                                } else if (action === 'sold') {
+                                    order.status = 'sold';
+                                    order.statusText = 'Продан';
+                                    showToast(`💰 Заказ ${orderId} отмечен как проданный`, 1500);
+                                }
+                                saveOrders();
                             }
-                        }
+                        });
                     });
-                });
+                }
             }
 
             // ----- Вкладки -----
@@ -1580,7 +1571,6 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                 renderFavorites();
                 renderOrders();
 
-                // Увеличил время заставки до 2.2 секунд, чтобы анимация успела завершиться
                 setTimeout(() => {
                     document.getElementById('splash').classList.add('hidden');
                     document.getElementById('mainContent').classList.add('visible');
