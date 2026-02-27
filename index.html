@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -25,7 +27,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Анимированная заставка - МОРФИНГ БУКВ (вариант 4) */
+        /* Анимированная заставка - МОРФИНГ БУКВ (увеличенная продолжительность) */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -38,7 +40,7 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
         }
 
         .splash-screen.hidden {
@@ -47,24 +49,24 @@
         }
 
         .splash-logo {
-            font-size: 80px;
+            font-size: 100px;
             font-weight: 700;
             color: #000;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: flex;
-            gap: 5px;
+            gap: 8px;
         }
 
         .splash-logo .letter {
             display: inline-block;
-            animation: morphLetter 2s ease-in-out infinite;
+            animation: morphLetter 2.5s ease-in-out infinite;
         }
 
         .splash-logo .letter:nth-child(1) {
             animation-delay: 0s;
         }
         .splash-logo .letter:nth-child(2) {
-            animation-delay: 0.2s;
+            animation-delay: 0.3s;
         }
 
         @keyframes morphLetter {
@@ -73,30 +75,30 @@
                 opacity: 1;
             }
             33% {
-                transform: scale(1.2) rotate(5deg);
+                transform: scale(1.25) rotate(6deg);
                 opacity: 0.8;
             }
             66% {
-                transform: scale(0.9) rotate(-5deg);
+                transform: scale(0.85) rotate(-6deg);
                 opacity: 0.9;
             }
         }
 
         .splash-title {
             overflow: hidden;
-            border-right: 2px solid #000;
+            border-right: 3px solid #000;
             white-space: nowrap;
-            animation: typing 2s steps(20, end), blinkCaret 0.75s step-end infinite;
-            font-size: 24px;
+            animation: typing 2.8s steps(20, end), blinkCaret 0.85s step-end infinite;
+            font-size: 28px;
             font-weight: 500;
             color: #8e8e93;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
             max-width: fit-content;
         }
 
         @keyframes typing {
             from { width: 0; }
-            to { width: 200px; }
+            to { width: 250px; }
         }
 
         @keyframes blinkCaret {
@@ -105,12 +107,12 @@
         }
 
         .splash-loader {
-            width: 48px;
-            height: 48px;
-            border: 3px solid #f0f0f0;
-            border-top: 3px solid #000;
+            width: 56px;
+            height: 56px;
+            border: 4px solid #f0f0f0;
+            border-top: 4px solid #000;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 1.2s linear infinite;
         }
 
         @keyframes spin {
@@ -121,7 +123,7 @@
         /* Основной контент */
         .main-content {
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.8s ease;
             padding: 18px 16px 32px;
             max-width: 600px;
             margin: 0 auto;
@@ -208,6 +210,63 @@
             border: 1px solid rgba(191, 59, 44, 0.1);
         }
 
+        /* Баннеры для новостей и скидок */
+        .banners-section {
+            margin-bottom: 24px;
+        }
+
+        .banner {
+            background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 12px;
+            border: 1px solid #eaeaea;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s;
+        }
+
+        .banner:active {
+            transform: scale(0.99);
+        }
+
+        .banner-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #000;
+        }
+
+        .banner-subtitle {
+            font-size: 14px;
+            color: #6c6c70;
+            margin-bottom: 8px;
+        }
+
+        .banner-discount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000;
+            line-height: 1.2;
+        }
+
+        .banner-small-text {
+            font-size: 13px;
+            color: #8e8e93;
+            margin-top: 8px;
+        }
+
+        .banner-highlight {
+            background: linear-gradient(135deg, #000 0%, #333 100%);
+            color: white;
+        }
+
+        .banner-highlight .banner-title,
+        .banner-highlight .banner-subtitle,
+        .banner-highlight .banner-discount,
+        .banner-highlight .banner-small-text {
+            color: white;
+        }
+
         /* Вкладки */
         .tabs {
             display: flex;
@@ -215,10 +274,11 @@
             margin-bottom: 24px;
             border-bottom: 1px solid #f0f0f0;
             padding-bottom: 8px;
+            flex-wrap: wrap;
         }
 
         .tab {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
             padding: 8px 0 10px;
             cursor: pointer;
@@ -228,6 +288,7 @@
             flex: 1;
             text-align: center;
             white-space: nowrap;
+            min-width: 70px;
         }
 
         .tab.active {
@@ -241,6 +302,44 @@
 
         .tab-content.hidden {
             display: none;
+        }
+
+        /* Сортировка по категориям */
+        .category-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .category-filter::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-btn {
+            background: #f5f5f5;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6c6c70;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .category-btn.active {
+            background: #000;
+            color: white;
+        }
+
+        .category-btn:active {
+            transform: scale(0.95);
         }
 
         /* Сетка товаров */
@@ -334,6 +433,14 @@
             margin-bottom: 6px;
             color: #1d1d1f;
             letter-spacing: -0.01em;
+        }
+
+        .product-category {
+            font-size: 12px;
+            color: #8e8e93;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .product-price {
@@ -464,6 +571,7 @@
             gap: 10px;
             margin-top: 8px;
             width: 100%;
+            flex-wrap: wrap;
         }
 
         .status-badge {
@@ -667,7 +775,8 @@
                 gap: 12px;
             }
             .tab {
-                font-size: 14px;
+                font-size: 13px;
+                min-width: 60px;
             }
         }
 
@@ -682,7 +791,7 @@
     </style>
 </head>
 <body>
-    <!-- Анимированная заставка с МОРФИНГОМ БУКВ -->
+    <!-- Анимированная заставка с МОРФИНГОМ БУКВ (увеличенная) -->
     <div class="splash-screen" id="splash">
         <div class="splash-logo">
             <span class="letter">Q</span>
@@ -697,6 +806,11 @@
         <!-- Профиль -->
         <div class="profile-header" id="profileContainer"></div>
 
+        <!-- Баннеры с новостями и скидками -->
+        <div class="banners-section" id="bannersContainer">
+            <!-- будут заполнены динамически -->
+        </div>
+
         <!-- Вкладки: Каталог | Корзина | ❤️ Избранное | 📦 Заказы -->
         <div class="tabs">
             <div class="tab active" data-tab="catalog">Каталог</div>
@@ -708,6 +822,18 @@
         <!-- Каталог товаров -->
         <div id="catalog-tab" class="tab-content">
             <h2 class="section-title">Свежая коллекция QQ</h2>
+            
+            <!-- Фильтр по категориям -->
+            <div class="category-filter" id="categoryFilter">
+                <button class="category-btn active" data-category="all">Все</button>
+                <button class="category-btn" data-category="футболки">Футболки</button>
+                <button class="category-btn" data-category="джинсы">Джинсы</button>
+                <button class="category-btn" data-category="штаны">Штаны</button>
+                <button class="category-btn" data-category="куртки">Куртки</button>
+                <button class="category-btn" data-category="рубашки">Рубашки</button>
+                <button class="category-btn" data-category="кросовки">Кросовки</button>
+            </div>
+            
             <div class="products-grid" id="productsGrid"></div>
         </div>
 
@@ -736,7 +862,7 @@
             <div id="favoritesItemsContainer" class="favorites-items"></div>
         </div>
 
-        <!-- История заказов (для продавца) -->
+        <!-- История заказов -->
         <div id="orders-tab" class="tab-content hidden">
             <div class="orders-header">
                 <div class="orders-title">История заказов</div>
@@ -744,7 +870,7 @@
             <div id="ordersContainer" class="orders-items"></div>
         </div>
 
-        <div class="footer-note">QQ · морфинг букв · заказы</div>
+        <div class="footer-note">QQ · морфинг букв · баннеры · сортировка</div>
     </div>
 
     <div id="toast" class="toast-message">👍</div>
@@ -754,8 +880,8 @@
     <script>
         (function() {
             // ⚠️ ВАШИ ДАННЫЕ (ЗАМЕНИТЕ) ⚠️
-            const YOUR_TELEGRAM_ID = 123456789;   // Ваш ID (узнайте у @userinfobot)
-            const BOT_TOKEN = 'ВАШ_ТОКЕН_БОТА';    // Токен вашего бота
+            const YOUR_TELEGRAM_ID = 1445393854;   // Ваш ID (узнайте у @userinfobot)
+            const BOT_TOKEN = '8393966699:AAF9vJ4VD6pnzqT7tQnmfsTSOUHFXMjmFLE';    // Токен вашего бота
 
             // Telegram
             const tg = window.Telegram?.WebApp;
@@ -779,33 +905,69 @@
                 userError = true;
             }
 
-            // ----- ТОВАРЫ (ДОБАВЬТЕ СВОИ ФОТО) -----
+            // ----- ТОВАРЫ С КАТЕГОРИЯМИ (ДОБАВЬТЕ СВОИ ФОТО) -----
             const products = [
                 { 
                     id: 'tshirt1', 
                     name: 'Хлопковая футболка QQ', 
                     price: 2490, 
+                    category: 'футболки',
                     icon: '👕',
                     image: '' // ссылка на фото
+                },
+                { 
+                    id: 'tshirt2', 
+                    name: 'Футболка оверсайз', 
+                    price: 2790, 
+                    category: 'футболки',
+                    icon: '👕',
+                    image: '' 
                 },
                 { 
                     id: 'jeans1', 
                     name: 'Классические джинсы', 
                     price: 4990, 
+                    category: 'джинсы',
                     icon: '👖',
                     image: '' 
                 },
                 { 
-                    id: 'sweater1', 
-                    name: 'Оверсайз свитер', 
-                    price: 3790, 
-                    icon: '🧥',
+                    id: 'jeans2', 
+                    name: 'Джинсы скинни', 
+                    price: 5290, 
+                    category: 'джинсы',
+                    icon: '👖',
+                    image: '' 
+                },
+                { 
+                    id: 'pants1', 
+                    name: 'Спортивные штаны', 
+                    price: 2790, 
+                    category: 'штаны',
+                    icon: '👖',
+                    image: '' 
+                },
+                { 
+                    id: 'pants2', 
+                    name: 'Штаны карго', 
+                    price: 3590, 
+                    category: 'штаны',
+                    icon: '👖',
                     image: '' 
                 },
                 { 
                     id: 'jacket1', 
                     name: 'Кожаная куртка', 
                     price: 12990, 
+                    category: 'куртки',
+                    icon: '🧥',
+                    image: '' 
+                },
+                { 
+                    id: 'jacket2', 
+                    name: 'Джинсовая куртка', 
+                    price: 6990, 
+                    category: 'куртки',
                     icon: '🧥',
                     image: '' 
                 },
@@ -813,28 +975,32 @@
                     id: 'shirt1', 
                     name: 'Льняная рубашка', 
                     price: 3290, 
+                    category: 'рубашки',
                     icon: '👔',
                     image: '' 
                 },
                 { 
-                    id: 'pants1', 
-                    name: 'Спортивные штаны', 
-                    price: 2790, 
-                    icon: '👖',
+                    id: 'shirt2', 
+                    name: 'Клетчатая рубашка', 
+                    price: 3590, 
+                    category: 'рубашки',
+                    icon: '👔',
                     image: '' 
                 },
                 { 
-                    id: 'raincoat1', 
-                    name: 'Дождевик', 
-                    price: 4590, 
-                    icon: '🧥',
+                    id: 'sneakers1', 
+                    name: 'Белые кросовки', 
+                    price: 5990, 
+                    category: 'кросовки',
+                    icon: '👟',
                     image: '' 
                 },
                 { 
-                    id: 'longsleeve1', 
-                    name: 'Базовый лонгслив', 
-                    price: 2190, 
-                    icon: '👕',
+                    id: 'sneakers2', 
+                    name: 'Черные кросовки', 
+                    price: 6490, 
+                    category: 'кросовки',
+                    icon: '👟',
                     image: '' 
                 }
             ];
@@ -842,7 +1008,8 @@
             // Состояния
             let likedProducts = new Set();
             let cart = [];
-            let orders = []; // История заказов (для продавца)
+            let orders = [];
+            let currentCategory = 'all'; // текущая выбранная категория
 
             // Загрузка из localStorage
             try {
@@ -894,9 +1061,29 @@
                 if (badge) badge.textContent = likedProducts.size;
             }
 
-            // Генерация уникального ID заказа
             function generateOrderId() {
                 return 'ORD-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            }
+
+            // ----- Баннеры -----
+            function renderBanners() {
+                const container = document.getElementById('bannersContainer');
+                if (!container) return;
+
+                container.innerHTML = `
+                    <div class="banner" onclick="showToast('📢 Акция действует до конца недели!')">
+                        <div class="banner-title">НОВОСТИ QQ</div>
+                        <div class="banner-subtitle">Пополнение коллекции</div>
+                        <div class="banner-discount">-20%</div>
+                        <div class="banner-small-text">на новые футболки и джинсы</div>
+                    </div>
+                    <div class="banner banner-highlight" onclick="showToast('🎉 Специальное предложение!')">
+                        <div class="banner-title">СКИДКА НЕДЕЛИ</div>
+                        <div class="banner-subtitle">При покупке от 5000 ₽</div>
+                        <div class="banner-discount">-15%</div>
+                        <div class="banner-small-text">на весь ассортимент</div>
+                    </div>
+                `;
             }
 
             // ----- Профиль -----
@@ -943,13 +1130,19 @@
                 `;
             }
 
-            // ----- Каталог -----
+            // ----- Каталог с сортировкой по категориям -----
             function renderProducts() {
                 const grid = document.getElementById('productsGrid');
                 if (!grid) return;
 
+                // Фильтруем товары по выбранной категории
+                let filteredProducts = products;
+                if (currentCategory !== 'all') {
+                    filteredProducts = products.filter(p => p.category === currentCategory);
+                }
+
                 let cardsHtml = '';
-                products.forEach(product => {
+                filteredProducts.forEach(product => {
                     const isLiked = likedProducts.has(product.id);
                     const likeSymbol = isLiked ? '❤️' : '🤍';
                     const likeClass = isLiked ? 'like-button liked' : 'like-button';
@@ -969,6 +1162,7 @@
                                 <div class="${likeClass}" data-like-id="${product.id}">${likeSymbol}</div>
                             </div>
                             <div class="product-info">
+                                <div class="product-category">${product.category}</div>
                                 <div class="product-title">${product.name}</div>
                                 <div class="product-price">${product.price.toLocaleString('ru-RU')} ₽</div>
                                 <button class="add-to-cart-btn" data-product-id="${product.id}">В корзину</button>
@@ -977,8 +1171,13 @@
                     `;
                 });
 
-                grid.innerHTML = cardsHtml;
+                if (filteredProducts.length === 0) {
+                    grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #8e8e93;">Товары не найдены</div>';
+                } else {
+                    grid.innerHTML = cardsHtml;
+                }
 
+                // Лайки
                 document.querySelectorAll('.like-button').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -997,6 +1196,7 @@
                     });
                 });
 
+                // Кнопки "В корзину"
                 document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -1013,6 +1213,31 @@
                         saveCart();
                         showToast(`✅ ${product.name} добавлен в корзину`, 1200);
                         if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                    });
+                });
+            }
+
+            // ----- Обработчик категорий -----
+            function initCategoryFilter() {
+                const categoryBtns = document.querySelectorAll('.category-btn');
+                categoryBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        categoryBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        currentCategory = btn.dataset.category;
+                        renderProducts();
+                        
+                        // Показываем тост с выбранной категорией
+                        const categoryNames = {
+                            'all': 'Все товары',
+                            'футболки': 'Футболки',
+                            'джинсы': 'Джинсы',
+                            'штаны': 'Штаны',
+                            'куртки': 'Куртки',
+                            'рубашки': 'Рубашки',
+                            'кросовки': 'Кросовки'
+                        };
+                        showToast(`📁 ${categoryNames[currentCategory] || currentCategory}`, 800);
                     });
                 });
             }
@@ -1124,7 +1349,6 @@
                         });
                         const totalSum = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
 
-                        // Создаем заказ со статусом "pending" (ожидает подтверждения)
                         const newOrder = {
                             id: generateOrderId(),
                             date: new Date().toISOString(),
@@ -1136,16 +1360,15 @@
                                 last_name: user.last_name,
                                 username: user.username
                             } : null,
-                            status: 'pending', // pending, confirmed, sold
+                            status: 'pending',
                             statusText: 'Ожидает подтверждения'
                         };
 
-                        orders.unshift(newOrder); // добавляем в начало
+                        orders.unshift(newOrder);
                         saveOrders();
 
                         showToast('⏳ Заказ создан, ожидайте подтверждения', 2000);
 
-                        // Отправляем уведомление продавцу
                         const message = `
 🛍 <b>Новый заказ в QQ!</b>
 
@@ -1236,7 +1459,7 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                 }
             }
 
-            // ----- История заказов (для продавца) -----
+            // ----- История заказов -----
             function renderOrders() {
                 const container = document.getElementById('ordersContainer');
                 if (!container) return;
@@ -1283,7 +1506,6 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
 
                 container.innerHTML = html;
 
-                // Обработчики для кнопок подтверждения
                 container.querySelectorAll('.confirm-order-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const orderId = btn.dataset.orderId;
@@ -1302,9 +1524,7 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                             }
                             saveOrders();
                             
-                            // Уведомление покупателю (если есть username)
                             if (order.user && order.user.username && tg) {
-                                // Здесь можно добавить логику уведомления через бота
                                 console.log(`Уведомление для @${order.user.username}: статус заказа ${order.status}`);
                             }
                         }
@@ -1349,19 +1569,22 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
 
             // ----- Запуск -----
             function init() {
+                renderBanners();
                 renderProfile();
                 renderProducts();
                 updateCartBadge();
                 updateFavoritesBadge();
                 initTabs();
+                initCategoryFilter();
                 renderCart();
                 renderFavorites();
                 renderOrders();
 
+                // Увеличил время заставки до 2.2 секунд, чтобы анимация успела завершиться
                 setTimeout(() => {
                     document.getElementById('splash').classList.add('hidden');
                     document.getElementById('mainContent').classList.add('visible');
-                }, 1500);
+                }, 2200);
             }
 
             document.addEventListener('DOMContentLoaded', init);
