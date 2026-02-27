@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Магазин одежды · Лайки и покупки</title>
+    <title>Магазин одежды · Уведомления продавцу</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
     <style>
-        /* Минимализм, белый фон, всё те же принципы */
+        /* Стили из предыдущего ответа (оставляем без изменений) */
         * {
             margin: 0;
             padding: 0;
@@ -33,7 +33,6 @@
             width: 100%;
         }
 
-        /* Профиль */
         .profile-header {
             display: flex;
             align-items: center;
@@ -118,7 +117,6 @@
             color: #1d1d1f;
         }
 
-        /* Сетка карточек */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -160,7 +158,6 @@
             opacity: 0.7;
         }
 
-        /* Кнопка лайка (сердечко) — минималистичная, поверх изображения */
         .like-button {
             position: absolute;
             top: 10px;
@@ -183,7 +180,7 @@
         }
 
         .like-button.liked {
-            color: #ff3b30; /* красный для лайка */
+            color: #ff3b30;
         }
 
         .like-button:active {
@@ -212,7 +209,6 @@
             margin-bottom: 12px;
         }
 
-        /* Кнопка покупки "Купить" */
         .buy-button {
             background-color: #000;
             color: white;
@@ -238,7 +234,6 @@
             transform: scale(0.98);
         }
 
-        /* Микро-уведомление (тост) */
         .toast-message {
             position: fixed;
             bottom: 24px;
@@ -290,20 +285,24 @@
 <body>
     <div class="app-container" id="app">
         <div class="profile-header" id="profileContainer"></div>
-
         <h2 class="section-title">Новинки недели</h2>
         <div class="products-grid" id="productsGrid"></div>
-        <div class="footer-note">двойная польза · лайк и покупка</div>
+        <div class="footer-note">нажми купить — продавец получит уведомление</div>
     </div>
 
-    <!-- Тост для обратной связи -->
     <div id="toast" class="toast-message">👍</div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <script>
         (function() {
-            // ---------- Telegram инициализация ----------
+            // ⚠️ ВАЖНО: ЗДЕСЬ НУЖНО ВСТАВИТЬ ВАШИ ДАННЫЕ ⚠️
+            // ============================================
+            const YOUR_TELEGRAM_ID = 123456789; // Замените на ваш ID (узнайте у @userinfobot)
+            const BOT_TOKEN = 'ВАШ_ТОКЕН_БОТА';   // Замените на токен вашего бота от @BotFather
+            // ============================================
+
+            // Telegram инициализация
             const tg = window.Telegram?.WebApp;
             if (tg) {
                 tg.ready();
@@ -312,7 +311,7 @@
                 tg.setBackgroundColor?.( '#ffffff' );
             }
 
-            // ---------- Данные пользователя ----------
+            // Данные пользователя
             let user = null;
             let userError = false;
 
@@ -328,31 +327,7 @@
                 console.error('Error parsing user data', e);
             }
 
-            // Для уведомлений владельцу (вам) — будем имитировать отправку через бота.
-            // В реальном боте вы обрабатываете callback или данные. Здесь же мы просто покажем тост и выведем в консоль данные,
-            // но также попытаемся отправить команду боту через tg.sendData (если используется режим отправки данных).
-            // Однако в простых Mini Apps можно отправить сообщение боту с помощью Telegram.WebApp.sendData.
-            // Это закроет приложение и отправит строку боту. Чтобы не закрывать, мы будем использовать всплывающий тост и эмуляцию.
-            // Но для реального предупреждения используем tg.sendData — он закроет окно, но оповестит бота.
-            // Сделаем выбор: при покупке будем показывать тост + в консоль, а также предложим отправить данные через sendData?
-            // Поскольку вы хотите, чтобы бот предупреждал — лучше использовать именно sendData, но с учётом, что мини-апп закроется.
-            // Чтобы не закрывать приложение, можно использовать Haptic feedback и просто имитировать, а реально отправлять через ваш бот-сервер.
-            // Для простоты примера мы сделаем так: при покупке показываем тост, имитируем отправку данных и пишем в консоль.
-            // Но также в демо-целях добавим кнопку "Отправить данные боту" внутри сообщения? Лучше сделаем через инициализацию MainButton.
-            
-            // Однако ТЗ: "когда человек что то хотел купить бот меня об этом предупреждал"
-            // Этого можно достичь двумя путями: 
-            // 1. Использовать Telegram.WebApp.sendData(data) — тогда Mini App закроется, а бот получит данные в поле message.data.
-            // 2. Использовать HTTP-запросы к вашему бэкенду (боту), но это требует размещения сервера.
-            // В рамках одного файла мы можем эмулировать предупреждение через консоль и тост, но для реального бота лучше sendData.
-            // Я добавлю функционал: при нажатии "Купить" будет вызываться tg.sendData с информацией о покупке.
-            // Так как вы продавец, бот получит эти данные и сможет вас уведомить. 
-            // При этом приложение закроется — это нормально для TMA, если это оформление заказа. 
-            // Но если вы хотите оставаться в приложении, то нужен сервер. Я выберу компромисс: 
-            // При покупке сначала показываем тост о том, что запрос отправляется, затем вызываем sendData.
-            // Также сохраняем лайки локально.
-
-            // ---------- Тост ----------
+            // Тост
             const toast = document.getElementById('toast');
             function showToast(text, duration = 2000) {
                 toast.textContent = text;
@@ -362,7 +337,51 @@
                 }, duration);
             }
 
-            // ---------- Профиль ----------
+            // Функция отправки уведомления вам в Telegram
+            async function notifySeller(purchaseData) {
+                // Формируем красивое сообщение для вас
+                const message = `
+🛍 <b>Новый заказ!</b>
+
+👕 Товар: ${purchaseData.product_name}
+💰 Цена: ${purchaseData.price} ₽
+🆔 Артикул: ${purchaseData.product_id}
+
+👤 Покупатель: ${purchaseData.user?.first_name || 'Неизвестно'} ${purchaseData.user?.last_name || ''}
+🔗 Username: ${purchaseData.user?.username ? '@' + purchaseData.user.username : 'нет'}
+🆔 ID: ${purchaseData.user?.id || 'неизвестно'}
+
+⏰ Время: ${new Date(purchaseData.timestamp).toLocaleString('ru-RU')}
+                `.trim();
+
+                // Отправляем через Telegram Bot API
+                try {
+                    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            chat_id: YOUR_TELEGRAM_ID,
+                            text: message,
+                            parse_mode: 'HTML'
+                        })
+                    });
+
+                    if (response.ok) {
+                        showToast('✅ Заказ отправлен продавцу!', 2000);
+                    } else {
+                        console.error('Ошибка отправки уведомления');
+                        showToast('⚠️ Ошибка, но мы знаем о заказе', 2000);
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    showToast('⚠️ Ошибка отправки', 2000);
+                }
+            }
+
+            // Профиль
             function getInitials(firstName, lastName) {
                 if (!firstName) return '?';
                 const first = firstName.charAt(0).toUpperCase();
@@ -407,7 +426,7 @@
                 `;
             }
 
-            // ---------- Товары ----------
+            // Товары
             const products = [
                 { id: 'tshirt1', name: 'Хлопковая футболка', price: 2490, icon: '👕' },
                 { id: 'jeans1', name: 'Классические джинсы', price: 4990, icon: '👖' },
@@ -419,10 +438,8 @@
                 { id: 'longsleeve1', name: 'Базовый лонгслив', price: 2190, icon: '👕' }
             ];
 
-            // Состояние лайков (храним в памяти)
+            // Лайки
             let likedProducts = new Set();
-
-            // Загружаем лайки из localStorage, если есть (чтобы не сбрасывались при перезагрузке)
             try {
                 const saved = localStorage.getItem('liked_products');
                 if (saved) {
@@ -430,32 +447,27 @@
                 }
             } catch (e) {}
 
-            // Функция сохранения лайков
             function saveLikes() {
                 try {
                     localStorage.setItem('liked_products', JSON.stringify([...likedProducts]));
                 } catch (e) {}
             }
 
-            // Обработчик лайка
             function toggleLike(productId, buttonElement) {
                 if (likedProducts.has(productId)) {
                     likedProducts.delete(productId);
                     buttonElement.classList.remove('liked');
-                    buttonElement.textContent = '🤍'; // пустое сердце
+                    buttonElement.textContent = '🤍';
                 } else {
                     likedProducts.add(productId);
                     buttonElement.classList.add('liked');
-                    buttonElement.textContent = '❤️'; // красное сердце
+                    buttonElement.textContent = '❤️';
                 }
                 saveLikes();
-                // Можно показать тост, но не обязательно
-                // showToast(likedProducts.has(productId) ? '❤️ В избранном' : '🤍 Убрано', 1000);
             }
 
-            // Обработчик покупки — отправляет данные боту и закрывает мини-апп (sendData)
-            function handleBuy(product, userInfo) {
-                // Формируем данные для бота (в виде строки, например JSON)
+            // Обработчик покупки
+            async function handleBuy(product, userInfo) {
                 const purchaseData = {
                     action: 'buy',
                     product_id: product.id,
@@ -464,31 +476,28 @@
                     user: userInfo ? {
                         id: userInfo.id,
                         first_name: userInfo.first_name,
+                        last_name: userInfo.last_name,
                         username: userInfo.username,
                     } : null,
                     timestamp: Date.now()
                 };
 
-                const dataString = JSON.stringify(purchaseData);
-                
-                // Показываем тост, что запрос отправляется
-                showToast(`⏳ Отправка запроса на ${product.name}...`, 1500);
+                // Показываем тост
+                showToast(`⏳ Оформляем заказ...`, 1000);
 
-                // Если есть Telegram WebApp и функция sendData — используем её (закроет приложение)
-                if (tg && typeof tg.sendData === 'function') {
-                    // Небольшая задержка, чтобы пользователь увидел тост
-                    setTimeout(() => {
-                        tg.sendData(dataString); // Бот получит это сообщение в поле data
-                    }, 200);
-                } else {
-                    // Если вне Telegram (например, тест в браузере) — просто логируем
-                    console.log('💠 Эмуляция отправки боту:', purchaseData);
-                    showToast('✅ Тест: данные в консоли (вне Telegram)', 2000);
+                // Отправляем уведомление вам
+                await notifySeller(purchaseData);
+
+                // Вибрация (если доступно)
+                if (tg && tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
                 }
 
-                // Также можно отправить haptic feedback (вибрация)
-                if (tg && tg.HapticFeedback) {
-                    tg.HapticFeedback.impactOccurred('medium');
+                // Если есть sendData, тоже отправляем (для совместимости)
+                if (tg && typeof tg.sendData === 'function') {
+                    setTimeout(() => {
+                        tg.sendData(JSON.stringify(purchaseData));
+                    }, 500);
                 }
             }
 
@@ -504,7 +513,6 @@
                     const likeSymbol = isLiked ? '❤️' : '🤍';
                     const likeClass = isLiked ? 'like-button liked' : 'like-button';
 
-                    // SVG-плейсхолдер
                     const svgPlaceholder = `<svg viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg>`;
 
                     cardsHtml += `
@@ -524,7 +532,6 @@
 
                 grid.innerHTML = cardsHtml;
 
-                // Навешиваем обработчики событий после вставки
                 document.querySelectorAll('.like-button').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -545,7 +552,7 @@
                 });
             }
 
-            // ---------- Старт ----------
+            // Старт
             document.addEventListener('DOMContentLoaded', () => {
                 renderProfile();
                 renderProducts();
@@ -557,7 +564,5 @@
             }
         })();
     </script>
-</body>
-</html>
 </body>
 </html>
