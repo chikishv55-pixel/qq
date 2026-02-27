@@ -1,5 +1,6 @@
-
-<!DOCTYPE html>
+ //8393966699:AAF9vJ4VD6pnzqT7tQnmfsTSOUHFXMjmFLE
+        //1445393854 */
+        <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -9,9 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        /* Все стили остаются точно такими же, как в предыдущем отв
-        //8393966699:AAF9vJ4VD6pnzqT7tQnmfsTSOUHFXMjmFLE
-        //1445393854ете */
+        /* Все стили остаются точно такими же */
         * {
             margin: 0;
             padding: 0;
@@ -472,14 +471,15 @@
             transform: scale(0.98);
         }
 
-        .cart-header, .favorites-header, .orders-header {
+        /* Стили для корзины, избранного и заказов */
+        .cart-header, .favorites-header, .orders-header, .management-header {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
             margin-bottom: 16px;
         }
 
-        .cart-title, .favorites-title, .orders-title {
+        .cart-title, .favorites-title, .orders-title, .management-title {
             font-size: 20px;
             font-weight: 600;
         }
@@ -499,17 +499,17 @@
             background: #ffe4e0;
         }
 
-        .cart-items, .favorites-items, .orders-items {
+        .cart-items, .favorites-items, .orders-items, .management-items {
             display: flex;
             flex-direction: column;
             gap: 16px;
             margin-bottom: 24px;
-            max-height: 50vh;
+            max-height: 60vh;
             overflow-y: auto;
             padding-right: 4px;
         }
 
-        .cart-item, .favorite-item, .order-item {
+        .cart-item, .favorite-item, .order-item, .management-item {
             display: flex;
             align-items: center;
             gap: 14px;
@@ -519,48 +519,48 @@
             border: 1px solid #f0f0f0;
         }
 
-        .order-item {
+        .order-item, .management-item {
             flex-direction: column;
             align-items: flex-start;
         }
 
-        .order-header {
+        .order-header, .management-header-item {
             display: flex;
             justify-content: space-between;
             width: 100%;
             margin-bottom: 8px;
         }
 
-        .order-id {
+        .order-id, .management-order-id {
             font-weight: 600;
             color: #000;
         }
 
-        .order-date {
+        .order-date, .management-date {
             font-size: 13px;
             color: #8e8e93;
         }
 
-        .order-products {
+        .order-products, .management-products {
             width: 100%;
             padding-left: 12px;
             border-left: 2px solid #e0e0e0;
             margin-bottom: 8px;
         }
 
-        .order-product-row {
+        .order-product-row, .management-product-row {
             display: flex;
             justify-content: space-between;
             font-size: 14px;
             margin: 4px 0;
         }
 
-        .order-total {
+        .order-total, .management-total {
             font-weight: 600;
             margin: 8px 0 4px;
         }
 
-        .order-status {
+        .order-status, .management-status {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -591,7 +591,7 @@
             color: #2e7d32;
         }
 
-        .confirm-order-btn {
+        .confirm-order-btn, .mark-sold-btn {
             background: #000;
             color: white;
             border: none;
@@ -603,8 +603,20 @@
             margin-left: auto;
         }
 
-        .confirm-order-btn:active {
-            background: #333;
+        .mark-sold-btn {
+            background: #2e7d32;
+        }
+
+        .confirm-order-btn:active, .mark-sold-btn:active {
+            opacity: 0.8;
+        }
+
+        .buyer-info {
+            font-size: 13px;
+            color: #6c6c70;
+            margin: 4px 0;
+            padding: 4px 0;
+            border-top: 1px dashed #e0e0e0;
         }
 
         .cart-item-image, .favorite-item-image {
@@ -727,7 +739,7 @@
             cursor: not-allowed;
         }
 
-        .empty-cart, .empty-favorites, .empty-orders {
+        .empty-cart, .empty-favorites, .empty-orders, .empty-management {
             text-align: center;
             padding: 48px 20px;
             color: #8e8e93;
@@ -805,11 +817,13 @@
         <div class="banners-section" id="bannersContainer"></div>
 
         <!-- Вкладки -->
-        <div class="tabs">
+        <div class="tabs" id="tabsContainer">
             <div class="tab active" data-tab="catalog">Каталог</div>
             <div class="tab" data-tab="cart">Корзина <span id="cart-count-badge" style="background:#000; color:white; border-radius:20px; padding:2px 8px; margin-left:6px; font-size:13px;">0</span></div>
             <div class="tab" data-tab="favorites">❤️ <span id="favorites-count-badge" style="background:#f0f0f0; color:#000; border-radius:20px; padding:2px 8px; margin-left:4px; font-size:13px;">0</span></div>
-            <div class="tab" data-tab="orders">📦 Заказы</div>
+            <div class="tab" data-tab="orders">📦 Мои заказы</div>
+            <!-- Вкладка для продавца (будет показана только вам) -->
+            <div class="tab" data-tab="management" id="sellerTab" style="display: none;">👑 Управление</div>
         </div>
 
         <!-- Каталог -->
@@ -852,15 +866,23 @@
             <div id="favoritesItemsContainer" class="favorites-items"></div>
         </div>
 
-        <!-- История заказов (только для продавца отображаются кнопки) -->
+        <!-- Мои заказы (для покупателя) -->
         <div id="orders-tab" class="tab-content hidden">
             <div class="orders-header">
-                <div class="orders-title">История заказов</div>
+                <div class="orders-title">Мои заказы</div>
             </div>
             <div id="ordersContainer" class="orders-items"></div>
         </div>
 
-        <div class="footer-note">QQ · Все права Защищены 2026</div>
+        <!-- Управление заказами (только для продавца) -->
+        <div id="management-tab" class="tab-content hidden">
+            <div class="management-header">
+                <div class="management-title">👑 Управление заказами</div>
+            </div>
+            <div id="managementContainer" class="management-items"></div>
+        </div>
+
+        <div class="footer-note">QQ · морфинг букв · управление заказами</div>
     </div>
 
     <div id="toast" class="toast-message">👍</div>
@@ -1001,7 +1023,7 @@
             // Состояния
             let likedProducts = new Set();
             let cart = [];
-            let orders = [];
+            let orders = []; // Все заказы всех пользователей
             let currentCategory = 'all';
 
             // Загрузка из localStorage
@@ -1040,7 +1062,10 @@
 
             function saveOrders() {
                 localStorage.setItem('orders', JSON.stringify(orders));
-                renderOrders();
+                renderOrders(); // обновляем "Мои заказы"
+                if (isSeller) {
+                    renderManagement(); // обновляем "Управление"
+                }
             }
 
             function updateCartBadge() {
@@ -1056,6 +1081,14 @@
 
             function generateOrderId() {
                 return 'ORD-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            }
+
+            // ----- Показываем вкладку для продавца, если это вы -----
+            function showSellerTab() {
+                const sellerTab = document.getElementById('sellerTab');
+                if (sellerTab) {
+                    sellerTab.style.display = isSeller ? 'block' : 'none';
+                }
             }
 
             // ----- Баннеры -----
@@ -1358,7 +1391,7 @@
 
                         showToast('⏳ Заказ создан, ожидайте подтверждения', 2000);
 
-                        // Отправляем уведомление ТОЛЬКО продавцу
+                        // Отправляем уведомление продавцу
                         const message = `
 🛍 <b>Новый заказ в QQ!</b>
 
@@ -1449,30 +1482,23 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                 }
             }
 
-            // ----- История заказов (с проверкой на продавца) -----
+            // ----- Мои заказы (покупатель видит только свои) -----
             function renderOrders() {
                 const container = document.getElementById('ordersContainer');
                 if (!container) return;
 
-                if (orders.length === 0) {
-                    container.innerHTML = '<div class="empty-orders">📦 История заказов пуста</div>';
+                // Фильтруем заказы только текущего пользователя
+                const myOrders = orders.filter(order => order.user && order.user.id === user?.id);
+
+                if (myOrders.length === 0) {
+                    container.innerHTML = '<div class="empty-orders">📦 У вас пока нет заказов</div>';
                     return;
                 }
 
                 let html = '';
-                orders.forEach(order => {
+                myOrders.forEach(order => {
                     const statusClass = order.status === 'pending' ? 'status-pending' : 
                                        order.status === 'confirmed' ? 'status-confirmed' : 'status-sold';
-                    
-                    // ⚡️ Кнопки управления видны ТОЛЬКО продавцу
-                    let actionButton = '';
-                    if (isSeller) {
-                        if (order.status === 'pending') {
-                            actionButton = `<button class="confirm-order-btn" data-order-id="${order.id}" data-action="confirm">✅ Подтвердить</button>`;
-                        } else if (order.status === 'confirmed') {
-                            actionButton = `<button class="confirm-order-btn" data-order-id="${order.id}" data-action="sold">💰 Продан</button>`;
-                        }
-                    }
 
                     html += `
                         <div class="order-item" data-order-id="${order.id}">
@@ -1491,7 +1517,61 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                             <div class="order-total">Итого: ${order.total.toLocaleString()} ₽</div>
                             <div class="order-status">
                                 <span class="status-badge ${statusClass}">${order.statusText || order.status}</span>
-                                ${actionButton}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            }
+
+            // ----- Управление заказами (продавец видит ВСЕ заказы) -----
+            function renderManagement() {
+                const container = document.getElementById('managementContainer');
+                if (!container) return;
+
+                if (orders.length === 0) {
+                    container.innerHTML = '<div class="empty-management">📦 Пока нет ни одного заказа</div>';
+                    return;
+                }
+
+                let html = '';
+                orders.forEach(order => {
+                    const statusClass = order.status === 'pending' ? 'status-pending' : 
+                                       order.status === 'confirmed' ? 'status-confirmed' : 'status-sold';
+                    
+                    // Информация о покупателе
+                    const buyerInfo = order.user ? 
+                        `👤 ${order.user.first_name || ''} ${order.user.last_name || ''} ${order.user.username ? '@' + order.user.username : ''} (ID: ${order.user.id})` : 
+                        '👤 Покупатель не авторизован';
+
+                    // Кнопки управления
+                    let actionButtons = '';
+                    if (order.status === 'pending') {
+                        actionButtons = `<button class="confirm-order-btn" data-order-id="${order.id}" data-action="confirm">✅ Подтвердить</button>`;
+                    } else if (order.status === 'confirmed') {
+                        actionButtons = `<button class="mark-sold-btn" data-order-id="${order.id}" data-action="sold">💰 Отметить проданным</button>`;
+                    }
+
+                    html += `
+                        <div class="management-item" data-order-id="${order.id}">
+                            <div class="management-header-item">
+                                <span class="management-order-id">${order.id}</span>
+                                <span class="management-date">${new Date(order.date).toLocaleString('ru-RU')}</span>
+                            </div>
+                            <div class="buyer-info">${buyerInfo}</div>
+                            <div class="management-products">
+                                ${order.items.map(item => `
+                                    <div class="management-product-row">
+                                        <span>${item.name} x${item.quantity}</span>
+                                        <span>${(item.price * item.quantity).toLocaleString()} ₽</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="management-total">Итого: ${order.total.toLocaleString()} ₽</div>
+                            <div class="management-status">
+                                <span class="status-badge ${statusClass}">${order.statusText || order.status}</span>
+                                ${actionButtons}
                             </div>
                         </div>
                     `;
@@ -1499,29 +1579,32 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
 
                 container.innerHTML = html;
 
-                // Обработчики кнопок (только для продавца, но проверка уже есть)
-                if (isSeller) {
-                    container.querySelectorAll('.confirm-order-btn').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const orderId = btn.dataset.orderId;
-                            const action = btn.dataset.action;
-                            const order = orders.find(o => o.id === orderId);
-                            
-                            if (order) {
-                                if (action === 'confirm') {
-                                    order.status = 'confirmed';
-                                    order.statusText = 'Подтвержден';
-                                    showToast(`✅ Заказ ${orderId} подтвержден`, 1500);
-                                } else if (action === 'sold') {
-                                    order.status = 'sold';
-                                    order.statusText = 'Продан';
-                                    showToast(`💰 Заказ ${orderId} отмечен как проданный`, 1500);
-                                }
-                                saveOrders();
-                            }
-                        });
+                // Обработчики кнопок для продавца
+                container.querySelectorAll('[data-action="confirm"]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const orderId = btn.dataset.orderId;
+                        const order = orders.find(o => o.id === orderId);
+                        if (order) {
+                            order.status = 'confirmed';
+                            order.statusText = 'Подтвержден';
+                            saveOrders();
+                            showToast(`✅ Заказ ${orderId} подтвержден`, 1500);
+                        }
                     });
-                }
+                });
+
+                container.querySelectorAll('[data-action="sold"]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const orderId = btn.dataset.orderId;
+                        const order = orders.find(o => o.id === orderId);
+                        if (order) {
+                            order.status = 'sold';
+                            order.statusText = 'Продан';
+                            saveOrders();
+                            showToast(`💰 Заказ ${orderId} отмечен как проданный`, 1500);
+                        }
+                    });
+                });
             }
 
             // ----- Вкладки -----
@@ -1531,9 +1614,13 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                 const cartTab = document.getElementById('cart-tab');
                 const favoritesTab = document.getElementById('favorites-tab');
                 const ordersTab = document.getElementById('orders-tab');
+                const managementTab = document.getElementById('management-tab');
 
                 tabs.forEach(tab => {
                     tab.addEventListener('click', () => {
+                        // Игнорируем клик по скрытой вкладке
+                        if (tab.style.display === 'none') return;
+                        
                         const target = tab.dataset.tab;
                         tabs.forEach(t => t.classList.remove('active'));
                         tab.classList.add('active');
@@ -1542,6 +1629,7 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                         cartTab.classList.add('hidden');
                         favoritesTab.classList.add('hidden');
                         ordersTab.classList.add('hidden');
+                        if (managementTab) managementTab.classList.add('hidden');
 
                         if (target === 'catalog') {
                             catalogTab.classList.remove('hidden');
@@ -1554,6 +1642,9 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                         } else if (target === 'orders') {
                             ordersTab.classList.remove('hidden');
                             renderOrders();
+                        } else if (target === 'management' && isSeller) {
+                            managementTab.classList.remove('hidden');
+                            renderManagement();
                         }
                     });
                 });
@@ -1561,6 +1652,7 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
 
             // ----- Запуск -----
             function init() {
+                showSellerTab();
                 renderBanners();
                 renderProfile();
                 renderProducts();
@@ -1571,6 +1663,9 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                 renderCart();
                 renderFavorites();
                 renderOrders();
+                if (isSeller) {
+                    renderManagement();
+                }
 
                 setTimeout(() => {
                     document.getElementById('splash').classList.add('hidden');
@@ -1584,4 +1679,3 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
     </script>
 </body>
 </html>
-
