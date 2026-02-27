@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Магазин одежды · Уведомления продавцу</title>
+    <title>Магазин одежды · Корзина и покупки</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
     <style>
-        /* Стили из предыдущего ответа (оставляем без изменений) */
+        /* Минимализм, но с душой */
         * {
             margin: 0;
             padding: 0;
@@ -33,11 +33,12 @@
             width: 100%;
         }
 
+        /* Профиль */
         .profile-header {
             display: flex;
             align-items: center;
             gap: 14px;
-            margin-bottom: 28px;
+            margin-bottom: 20px;
             padding: 8px 0;
         }
 
@@ -109,14 +110,41 @@
             border: 1px solid rgba(191, 59, 44, 0.1);
         }
 
-        .section-title {
-            font-size: 20px;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            margin-bottom: 16px;
-            color: #1d1d1f;
+        /* Навигация (вкладки: товары / корзина) */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 8px;
         }
 
+        .tab {
+            font-size: 17px;
+            font-weight: 500;
+            padding: 8px 0 10px;
+            cursor: pointer;
+            color: #8e8e93;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .tab.active {
+            color: #000;
+            border-bottom-color: #000;
+        }
+
+        .tab-content {
+            display: block;
+        }
+
+        .tab-content.hidden {
+            display: none;
+        }
+
+        /* Сетка товаров */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -158,6 +186,7 @@
             opacity: 0.7;
         }
 
+        /* Кнопка лайка */
         .like-button {
             position: absolute;
             top: 10px;
@@ -209,31 +238,203 @@
             margin-bottom: 12px;
         }
 
-        .buy-button {
-            background-color: #000;
-            color: white;
+        /* Кнопка "В корзину" */
+        .add-to-cart-btn {
+            background-color: #f2f2f2;
+            color: #1d1d1f;
             border: none;
             border-radius: 40px;
             padding: 10px 0;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             width: 100%;
             cursor: pointer;
             transition: background-color 0.2s;
             font-family: 'Inter', sans-serif;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
             letter-spacing: -0.01em;
         }
 
-        .buy-button:hover {
-            background-color: #333;
+        .add-to-cart-btn:hover {
+            background-color: #e5e5e5;
         }
 
-        .buy-button:active {
-            background-color: #444;
+        .add-to-cart-btn:active {
+            background-color: #d9d9d9;
             transform: scale(0.98);
         }
 
+        /* Корзина */
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+        }
+
+        .cart-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .cart-clear {
+            color: #ff3b30;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 30px;
+            background: #fef2f0;
+            transition: background 0.15s;
+        }
+
+        .cart-clear:active {
+            background: #ffe4e0;
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+            max-height: 50vh;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #fafafa;
+            border-radius: 22px;
+            padding: 12px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .cart-item-image {
+            width: 64px;
+            height: 64px;
+            background: #eaeaea;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-price {
+            font-weight: 600;
+            color: #000;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .cart-item-qty {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ffffff;
+            border-radius: 40px;
+            padding: 4px 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f2f2f2;
+            border: none;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1d1d1f;
+        }
+
+        .qty-btn:active {
+            background: #e0e0e0;
+        }
+
+        .qty-value {
+            font-weight: 500;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .cart-item-remove {
+            color: #8e8e93;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 0 6px;
+        }
+
+        .cart-footer {
+            border-top: 1px solid #f0f0f0;
+            padding-top: 20px;
+            margin-top: 8px;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .cart-checkout-btn {
+            background-color: #000;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 16px 0;
+            font-size: 17px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .cart-checkout-btn:active {
+            background-color: #333;
+            transform: scale(0.98);
+        }
+
+        .cart-checkout-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 48px 20px;
+            color: #8e8e93;
+            font-size: 16px;
+            background: #fafafa;
+            border-radius: 32px;
+        }
+
+        /* Тосты */
         .toast-message {
             position: fixed;
             bottom: 24px;
@@ -267,9 +468,6 @@
             .products-grid {
                 gap: 12px;
             }
-            .product-info {
-                padding: 12px 10px 14px;
-            }
         }
 
         .footer-note {
@@ -284,10 +482,40 @@
 </head>
 <body>
     <div class="app-container" id="app">
+        <!-- Профиль -->
         <div class="profile-header" id="profileContainer"></div>
-        <h2 class="section-title">Новинки недели</h2>
-        <div class="products-grid" id="productsGrid"></div>
-        <div class="footer-note">нажми купить — продавец получит уведомление</div>
+
+        <!-- Вкладки: Товары / Корзина -->
+        <div class="tabs">
+            <div class="tab active" data-tab="catalog">Каталог</div>
+            <div class="tab" data-tab="cart">Корзина <span id="cart-count-badge" style="background:#000; color:white; border-radius:20px; padding:2px 8px; margin-left:6px; font-size:13px;">0</span></div>
+        </div>
+
+        <!-- Каталог товаров -->
+        <div id="catalog-tab" class="tab-content">
+            <h2 class="section-title">Свежая коллекция</h2>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+
+        <!-- Корзина -->
+        <div id="cart-tab" class="tab-content hidden">
+            <div class="cart-header">
+                <div class="cart-title">Ваша корзина</div>
+                <div class="cart-clear" id="clearCartBtn">Очистить</div>
+            </div>
+            <div id="cartItemsContainer" class="cart-items">
+                <!-- будут отрисованы динамически -->
+            </div>
+            <div class="cart-footer" id="cartFooter">
+                <div class="cart-total">
+                    <span>Итого:</span>
+                    <span id="cartTotalPrice">0 ₽</span>
+                </div>
+                <button class="cart-checkout-btn" id="checkoutBtn">Оформить заказ</button>
+            </div>
+        </div>
+
+        <div class="footer-note">лайки · корзина · покупки</div>
     </div>
 
     <div id="toast" class="toast-message">👍</div>
@@ -295,12 +523,12 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <script>
-        (function() 
-            const YOUR_TELEGRAM_ID = 1445393854; // Замените на ваш ID (узнайте у @userinfobot)
-            const BOT_TOKEN = '8393966699:AAF9vJ4VD6pnzqT7tQnmfsTSOUHFXMjmFLE';   // Замените на токен вашего бота от @BotFather
-            // ============================================
+        (function() {
+            // ⚠️ ВАШИ ДАННЫЕ (ЗАМЕНИТЕ) ⚠️
+            const YOUR_TELEGRAM_ID = 1445393854;   // Ваш ID (узнайте у @userinfobot)
+            const BOT_TOKEN = '8393966699:AAF9vJ4VD6pnzqT7tQnmfsTSOUHFXMjmFLE';    // Токен вашего бота
 
-            // Telegram инициализация
+            // Telegram
             const tg = window.Telegram?.WebApp;
             if (tg) {
                 tg.ready();
@@ -312,20 +540,43 @@
             // Данные пользователя
             let user = null;
             let userError = false;
-
             try {
                 if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     user = tg.initDataUnsafe.user;
                 } else {
                     userError = true;
-                    console.warn('Telegram user data not available');
                 }
             } catch (e) {
                 userError = true;
-                console.error('Error parsing user data', e);
             }
 
-            // Тост
+            // ----- Глобальные переменные -----
+            // Товары
+            const products = [
+                { id: 'tshirt1', name: 'Хлопковая футболка', price: 2490, icon: '👕' },
+                { id: 'jeans1', name: 'Классические джинсы', price: 4990, icon: '👖' },
+                { id: 'sweater1', name: 'Оверсайз свитер', price: 3790, icon: '🧥' },
+                { id: 'jacket1', name: 'Кожаная куртка', price: 12990, icon: '🧥' },
+                { id: 'shirt1', name: 'Льняная рубашка', price: 3290, icon: '👔' },
+                { id: 'pants1', name: 'Спортивные штаны', price: 2790, icon: '👖' },
+                { id: 'raincoat1', name: 'Дождевик', price: 4590, icon: '🧥' },
+                { id: 'longsleeve1', name: 'Базовый лонгслив', price: 2190, icon: '👕' }
+            ];
+
+            // Состояния
+            let likedProducts = new Set();          // лайки
+            let cart = [];                           // корзина { id, quantity }
+
+            // Загрузка из localStorage
+            try {
+                const savedLikes = localStorage.getItem('liked_products');
+                if (savedLikes) likedProducts = new Set(JSON.parse(savedLikes));
+                
+                const savedCart = localStorage.getItem('cart');
+                if (savedCart) cart = JSON.parse(savedCart);
+            } catch (e) {}
+
+            // ----- Вспомогательные функции -----
             const toast = document.getElementById('toast');
             function showToast(text, duration = 2000) {
                 toast.textContent = text;
@@ -335,15 +586,32 @@
                 }, duration);
             }
 
-            // Функция отправки уведомления вам в Telegram
+            // Сохранение данных
+            function saveLikes() {
+                localStorage.setItem('liked_products', JSON.stringify([...likedProducts]));
+            }
+            function saveCart() {
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartBadge();
+                renderCart();
+            }
+
+            // Обновление счетчика корзины
+            function updateCartBadge() {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                const badge = document.getElementById('cart-count-badge');
+                if (badge) badge.textContent = totalItems;
+            }
+
+            // Отправка уведомления продавцу
             async function notifySeller(purchaseData) {
-                // Формируем красивое сообщение для вас
                 const message = `
 🛍 <b>Новый заказ!</b>
 
-👕 Товар: ${purchaseData.product_name}
-💰 Цена: ${purchaseData.price} ₽
-🆔 Артикул: ${purchaseData.product_id}
+🧾 Товары:
+${purchaseData.items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`).join('\n')}
+
+💰 Сумма: ${purchaseData.total} ₽
 
 👤 Покупатель: ${purchaseData.user?.first_name || 'Неизвестно'} ${purchaseData.user?.last_name || ''}
 🔗 Username: ${purchaseData.user?.username ? '@' + purchaseData.user.username : 'нет'}
@@ -352,34 +620,21 @@
 ⏰ Время: ${new Date(purchaseData.timestamp).toLocaleString('ru-RU')}
                 `.trim();
 
-                // Отправляем через Telegram Bot API
                 try {
                     const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-                    const response = await fetch(url, {
+                    await fetch(url, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            chat_id: YOUR_TELEGRAM_ID,
-                            text: message,
-                            parse_mode: 'HTML'
-                        })
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chat_id: YOUR_TELEGRAM_ID, text: message, parse_mode: 'HTML' })
                     });
-
-                    if (response.ok) {
-                        showToast('✅ Заказ отправлен продавцу!', 2000);
-                    } else {
-                        console.error('Ошибка отправки уведомления');
-                        showToast('⚠️ Ошибка, но мы знаем о заказе', 2000);
-                    }
+                    showToast('✅ Заказ отправлен продавцу', 2000);
                 } catch (error) {
-                    console.error('Ошибка:', error);
-                    showToast('⚠️ Ошибка отправки', 2000);
+                    console.error('Ошибка уведомления', error);
+                    showToast('⚠️ Заказ принят, но уведомление не отправлено', 2000);
                 }
             }
 
-            // Профиль
+            // ----- Профиль -----
             function getInitials(firstName, lastName) {
                 if (!firstName) return '?';
                 const first = firstName.charAt(0).toUpperCase();
@@ -395,7 +650,6 @@
                     container.innerHTML = `<div class="error-message">👤 Не удалось загрузить профиль</div>`;
                     return;
                 }
-
                 if (!user) {
                     container.innerHTML = `<div class="error-message">😺 Профиль временно недоступен</div>`;
                     return;
@@ -424,94 +678,18 @@
                 `;
             }
 
-            // Товары
-            const products = [
-                { id: 'tshirt1', name: 'Хлопковая футболка', price: 2490, icon: '👕' },
-                { id: 'jeans1', name: 'Классические джинсы', price: 4990, icon: '👖' },
-                { id: 'sweater1', name: 'Оверсайз свитер', price: 3790, icon: '🧥' },
-                { id: 'jacket1', name: 'Кожаная куртка', price: 12990, icon: '🧥' },
-                { id: 'shirt1', name: 'Льняная рубашка', price: 3290, icon: '👔' },
-                { id: 'pants1', name: 'Спортивные штаны', price: 2790, icon: '👖' },
-                { id: 'raincoat1', name: 'Дождевик', price: 4590, icon: '🧥' },
-                { id: 'longsleeve1', name: 'Базовый лонгслив', price: 2190, icon: '👕' }
-            ];
-
-            // Лайки
-            let likedProducts = new Set();
-            try {
-                const saved = localStorage.getItem('liked_products');
-                if (saved) {
-                    likedProducts = new Set(JSON.parse(saved));
-                }
-            } catch (e) {}
-
-            function saveLikes() {
-                try {
-                    localStorage.setItem('liked_products', JSON.stringify([...likedProducts]));
-                } catch (e) {}
-            }
-
-            function toggleLike(productId, buttonElement) {
-                if (likedProducts.has(productId)) {
-                    likedProducts.delete(productId);
-                    buttonElement.classList.remove('liked');
-                    buttonElement.textContent = '🤍';
-                } else {
-                    likedProducts.add(productId);
-                    buttonElement.classList.add('liked');
-                    buttonElement.textContent = '❤️';
-                }
-                saveLikes();
-            }
-
-            // Обработчик покупки
-            async function handleBuy(product, userInfo) {
-                const purchaseData = {
-                    action: 'buy',
-                    product_id: product.id,
-                    product_name: product.name,
-                    price: product.price,
-                    user: userInfo ? {
-                        id: userInfo.id,
-                        first_name: userInfo.first_name,
-                        last_name: userInfo.last_name,
-                        username: userInfo.username,
-                    } : null,
-                    timestamp: Date.now()
-                };
-
-                // Показываем тост
-                showToast(`⏳ Оформляем заказ...`, 1000);
-
-                // Отправляем уведомление вам
-                await notifySeller(purchaseData);
-
-                // Вибрация (если доступно)
-                if (tg && tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('success');
-                }
-
-                // Если есть sendData, тоже отправляем (для совместимости)
-                if (tg && typeof tg.sendData === 'function') {
-                    setTimeout(() => {
-                        tg.sendData(JSON.stringify(purchaseData));
-                    }, 500);
-                }
-            }
-
-            // Рендер карточек
+            // ----- Товары (каталог) -----
             function renderProducts() {
                 const grid = document.getElementById('productsGrid');
                 if (!grid) return;
 
                 let cardsHtml = '';
-
                 products.forEach(product => {
                     const isLiked = likedProducts.has(product.id);
                     const likeSymbol = isLiked ? '❤️' : '🤍';
                     const likeClass = isLiked ? 'like-button liked' : 'like-button';
 
-                    const svgPlaceholder = `<svg viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg>`;
+                    const svgPlaceholder = `<svg viewBox="0 0 40 44" fill="none"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg>`;
 
                     cardsHtml += `
                         <div class="product-card" data-product-id="${product.id}">
@@ -522,7 +700,7 @@
                             <div class="product-info">
                                 <div class="product-title">${product.name}</div>
                                 <div class="product-price">${product.price.toLocaleString('ru-RU')} ₽</div>
-                                <button class="buy-button" data-buy-id="${product.id}">Купить</button>
+                                <button class="add-to-cart-btn" data-product-id="${product.id}">В корзину</button>
                             </div>
                         </div>
                     `;
@@ -530,39 +708,224 @@
 
                 grid.innerHTML = cardsHtml;
 
+                // Лайки
                 document.querySelectorAll('.like-button').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const productId = btn.dataset.likeId;
-                        toggleLike(productId, btn);
+                        if (likedProducts.has(productId)) {
+                            likedProducts.delete(productId);
+                            btn.classList.remove('liked');
+                            btn.textContent = '🤍';
+                        } else {
+                            likedProducts.add(productId);
+                            btn.classList.add('liked');
+                            btn.textContent = '❤️';
+                        }
+                        saveLikes();
                     });
                 });
 
-                document.querySelectorAll('.buy-button').forEach(btn => {
+                // Кнопки "В корзину"
+                document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const productId = btn.dataset.buyId;
+                        const productId = btn.dataset.productId;
                         const product = products.find(p => p.id === productId);
-                        if (product) {
-                            handleBuy(product, user);
+                        if (!product) return;
+
+                        // Добавляем в корзину
+                        const existing = cart.find(item => item.id === productId);
+                        if (existing) {
+                            existing.quantity += 1;
+                        } else {
+                            cart.push({ id: productId, quantity: 1 });
+                        }
+                        saveCart();
+                        showToast(`✅ ${product.name} добавлен`, 1200);
+                        if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                    });
+                });
+            }
+
+            // ----- Корзина (рендер) -----
+            function renderCart() {
+                const container = document.getElementById('cartItemsContainer');
+                const footer = document.getElementById('cartFooter');
+                const totalSpan = document.getElementById('cartTotalPrice');
+                const clearBtn = document.getElementById('clearCartBtn');
+                const checkoutBtn = document.getElementById('checkoutBtn');
+
+                if (!container) return;
+
+                if (cart.length === 0) {
+                    container.innerHTML = '<div class="empty-cart">🛒 В корзине пусто</div>';
+                    if (footer) footer.style.display = 'none';
+                    return;
+                } else {
+                    if (footer) footer.style.display = 'block';
+                }
+
+                let html = '';
+                let total = 0;
+
+                cart.forEach(item => {
+                    const product = products.find(p => p.id === item.id);
+                    if (!product) return;
+                    const itemTotal = product.price * item.quantity;
+                    total += itemTotal;
+
+                    html += `
+                        <div class="cart-item" data-cart-id="${item.id}">
+                            <div class="cart-item-image">${product.icon}</div>
+                            <div class="cart-item-info">
+                                <div class="cart-item-title">${product.name}</div>
+                                <div class="cart-item-price">${product.price.toLocaleString()} ₽</div>
+                                <div class="cart-item-actions">
+                                    <div class="cart-item-qty">
+                                        <button class="qty-btn" data-action="decr" data-id="${item.id}">−</button>
+                                        <span class="qty-value">${item.quantity}</span>
+                                        <button class="qty-btn" data-action="incr" data-id="${item.id}">+</button>
+                                    </div>
+                                    <span class="cart-item-remove" data-action="remove" data-id="${item.id}">🗑️</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+                if (totalSpan) totalSpan.textContent = total.toLocaleString() + ' ₽';
+
+                // Обработчики внутри корзины
+                container.querySelectorAll('[data-action="incr"]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.dataset.id;
+                        const item = cart.find(i => i.id === id);
+                        if (item) { item.quantity++; saveCart(); }
+                    });
+                });
+                container.querySelectorAll('[data-action="decr"]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.dataset.id;
+                        const item = cart.find(i => i.id === id);
+                        if (item) {
+                            if (item.quantity > 1) {
+                                item.quantity--;
+                            } else {
+                                cart = cart.filter(i => i.id !== id);
+                            }
+                            saveCart();
+                        }
+                    });
+                });
+                container.querySelectorAll('[data-action="remove"]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = btn.dataset.id;
+                        cart = cart.filter(i => i.id !== id);
+                        saveCart();
+                        showToast('🗑️ Товар удален', 1000);
+                    });
+                });
+
+                // Очистить корзину
+                if (clearBtn) {
+                    clearBtn.onclick = () => {
+                        if (cart.length > 0) {
+                            cart = [];
+                            saveCart();
+                            showToast('🧹 Корзина очищена', 1500);
+                        }
+                    };
+                }
+
+                // Оформление заказа
+                if (checkoutBtn) {
+                    checkoutBtn.onclick = async () => {
+                        if (cart.length === 0) {
+                            showToast('Корзина пуста', 1500);
+                            return;
+                        }
+
+                        // Подготовка данных
+                        const items = cart.map(item => {
+                            const product = products.find(p => p.id === item.id);
+                            return {
+                                id: item.id,
+                                name: product.name,
+                                price: product.price,
+                                quantity: item.quantity
+                            };
+                        });
+                        const totalSum = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
+
+                        const orderData = {
+                            action: 'checkout',
+                            items: items,
+                            total: totalSum,
+                            user: user ? {
+                                id: user.id,
+                                first_name: user.first_name,
+                                last_name: user.last_name,
+                                username: user.username
+                            } : null,
+                            timestamp: Date.now()
+                        };
+
+                        showToast('⏳ Оформляем заказ...', 1000);
+                        await notifySeller(orderData);
+
+                        if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+
+                        // Очищаем корзину после заказа
+                        cart = [];
+                        saveCart();
+
+                        // Если есть sendData (для бэкапа)
+                        if (tg && typeof tg.sendData === 'function') {
+                            tg.sendData(JSON.stringify(orderData));
+                        }
+                    };
+                }
+            }
+
+            // ----- Вкладки (переключение) -----
+            function initTabs() {
+                const tabs = document.querySelectorAll('.tab');
+                const catalogTab = document.getElementById('catalog-tab');
+                const cartTab = document.getElementById('cart-tab');
+
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const target = tab.dataset.tab;
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+
+                        if (target === 'catalog') {
+                            catalogTab.classList.remove('hidden');
+                            cartTab.classList.add('hidden');
+                        } else {
+                            catalogTab.classList.add('hidden');
+                            cartTab.classList.remove('hidden');
+                            renderCart(); // перерисовываем при открытии
                         }
                     });
                 });
             }
 
-            // Старт
-            document.addEventListener('DOMContentLoaded', () => {
+            // ----- Запуск -----
+            function init() {
                 renderProfile();
                 renderProducts();
-            });
-
-            if (document.readyState === 'interactive' || document.readyState === 'complete') {
-                renderProfile();
-                renderProducts();
+                updateCartBadge();
+                initTabs();
+                // Если корзина не пуста, рендерим её (но она скрыта)
+                renderCart();
             }
+
+            document.addEventListener('DOMContentLoaded', init);
+            if (document.readyState === 'interactive' || document.readyState === 'complete') init();
         })();
     </script>
 </body>
 </html>
-
-
