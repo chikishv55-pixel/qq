@@ -352,6 +352,7 @@
             flex-direction: column;
             border: 1px solid #f0f0f0;
             position: relative;
+            cursor: pointer;
         }
 
         .product-card:hover {
@@ -444,28 +445,146 @@
             margin-bottom: 12px;
         }
 
-        .add-to-cart-btn {
-            background-color: #f2f2f2;
+        /* Модальное окно товара */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 32px 32px 0 0;
+            padding: 24px 20px 30px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 28px;
+            color: #8e8e93;
+            cursor: pointer;
+            z-index: 2001;
+        }
+
+        .modal-product-image {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: #f5f5f5;
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .modal-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-product-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        .modal-product-price {
+            font-size: 24px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 16px;
+        }
+
+        .modal-product-description {
+            font-size: 16px;
+            color: #6c6c70;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .size-selector-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #000;
+        }
+
+        .size-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .size-btn {
+            min-width: 60px;
+            height: 50px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
             color: #1d1d1f;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 0 20px;
+        }
+
+        .size-btn.active {
+            background: #000;
+            color: white;
+            border-color: #000;
+        }
+
+        .size-btn:active {
+            transform: scale(0.95);
+        }
+
+        .add-to-cart-modal-btn {
+            background: #000;
+            color: white;
             border: none;
             border-radius: 40px;
-            padding: 10px 0;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 18px 0;
+            font-size: 18px;
+            font-weight: 600;
             width: 100%;
             cursor: pointer;
             transition: background-color 0.2s;
             font-family: 'Inter', sans-serif;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            letter-spacing: -0.01em;
+            margin-top: 10px;
         }
 
-        .add-to-cart-btn:hover {
-            background-color: #e5e5e5;
-        }
-
-        .add-to-cart-btn:active {
-            background-color: #d9d9d9;
+        .add-to-cart-modal-btn:active {
+            background: #333;
             transform: scale(0.98);
         }
 
@@ -608,6 +727,12 @@
         .cart-item-price, .favorite-item-price {
             font-weight: 600;
             color: #000;
+        }
+
+        .cart-item-size {
+            font-size: 13px;
+            color: #6c6c70;
+            margin-top: 2px;
         }
 
         .cart-item-actions {
@@ -753,11 +878,6 @@
             border-top: 1px solid #f0f0f0;
             padding-top: 20px;
         }
-
-        /* Инструкция по добавлению товаров (будет скрыта) */
-        .instruction-hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -836,7 +956,15 @@
             <div id="ordersContainer" class="orders-items"></div>
         </div>
 
-        <div class="footer-note">D&B · морфинг букв · баннеры · сортировка</div>
+        <div class="footer-note">D&B · выбор размера · детали товара</div>
+    </div>
+
+    <!-- Модальное окно товара -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-close" id="closeModal">×</div>
+        <div class="modal-content" id="modalContent">
+            <!-- Контент будет заполняться динамически -->
+        </div>
     </div>
 
     <div id="toast" class="toast-message">👍</div>
@@ -871,47 +999,137 @@
                 userError = true;
             }
 
-            // ============================================================
-            // 🛍️ ИНСТРУКЦИЯ ПО ДОБАВЛЕНИЮ ТОВАРОВ
-            // ============================================================
-            // 
-            // 1. Чтобы добавить свой товар, скопируйте строку ниже:
-            //    { id: 'уникальный-id', name: 'Название товара', price: 9999, category: 'категория', icon: '👕', image: 'https://ссылка-на-фото.jpg' }
-            //
-            // 2. Категории могут быть: 'футболки', 'джинсы', 'штаны', 'куртки', 'рубашки', 'кросовки'
-            //
-            // 3. id должен быть уникальным для каждого товара (используйте английские буквы и цифры)
-            //
-            // 4. price указывайте в рублях (только число)
-            //
-            // 5. icon - это эмодзи для отображения, если фото не загрузится
-            //
-            // 6. image - прямая ссылка на фото. Как получить ссылку:
-            //    - Загрузите фото в Telegram (например, в "Избранное")
-            //    - Откройте фото в браузере (Telegram Web) и скопируйте URL
-            //    - Или используйте любой фотохостинг (imgbb.com, postimages.org)
-            //
-            // 7. После добавления товаров, удалите этот комментарий или оставьте как памятку
-            // ============================================================
-
-            // ----- ТОВАРЫ (ЗДЕСЬ ВЫ ДОБАВЛЯЕТЕ СВОИ) -----
+            // ----- ТОВАРЫ С КАТЕГОРИЯМИ И ОПИСАНИЕМ -----
             const products = [
-                // Пример товара с фото:
                 { 
                     id: 'tshirt1', 
                     name: 'Хлопковая футболка D&B', 
                     price: 2490, 
                     category: 'футболки',
                     icon: '👕',
-                    image: 'blob:https://web.telegram.org/b28d2628-4eb4-48bd-9aee-40b89ecdc918' // СЮДА ВСТАВЛЯЙТЕ ССЫЛКУ НА ФОТО
-                } 
+                    image: '', // ссылка на фото
+                    description: 'Классическая хлопковая футболка из мягкого материала. Идеально подходит для повседневной носки. Состав: 100% хлопок.',
+                    sizes: ['XS', 'S', 'M', 'L', 'XL']
+                },
+                { 
+                    id: 'tshirt2', 
+                    name: 'Футболка оверсайз', 
+                    price: 2790, 
+                    category: 'футболки',
+                    icon: '👕',
+                    image: '', // ссылка на фото
+                    description: 'Модная футболка свободного кроя. Подходит для создания стильных образов. Состав: 95% хлопок, 5% эластан.',
+                    sizes: ['S', 'M', 'L', 'XL']
+                },
+                { 
+                    id: 'jeans1', 
+                    name: 'Классические джинсы', 
+                    price: 4990, 
+                    category: 'джинсы',
+                    icon: '👖',
+                    image: '', // ссылка на фото
+                    description: 'Классические джинсы прямого кроя. Универсальная модель на каждый день. Состав: 98% хлопок, 2% эластан.',
+                    sizes: ['28', '30', '32', '34', '36']
+                },
+                { 
+                    id: 'jeans2', 
+                    name: 'Джинсы скинни', 
+                    price: 5290, 
+                    category: 'джинсы',
+                    icon: '👖',
+                    image: '', // ссылка на фото
+                    description: 'Облегающие джинсы скинни. Подчеркивают фигуру и отлично тянутся. Состав: 97% хлопок, 3% эластан.',
+                    sizes: ['26', '28', '30', '32', '34']
+                },
+                { 
+                    id: 'pants1', 
+                    name: 'Спортивные штаны', 
+                    price: 2790, 
+                    category: 'штаны',
+                    icon: '👖',
+                    image: '', // ссылка на фото
+                    description: 'Удобные спортивные штаны из мягкого трикотажа. Подойдут для тренировок и дома. Состав: 100% хлопок.',
+                    sizes: ['XS', 'S', 'M', 'L', 'XL']
+                },
+                { 
+                    id: 'pants2', 
+                    name: 'Штаны карго', 
+                    price: 3590, 
+                    category: 'штаны',
+                    icon: '👖',
+                    image: '', // ссылка на фото
+                    description: 'Стильные штаны карго с боковыми карманами. Универсальный вариант для города. Состав: 100% хлопок.',
+                    sizes: ['S', 'M', 'L', 'XL']
+                },
+                { 
+                    id: 'jacket1', 
+                    name: 'Кожаная куртка', 
+                    price: 12990, 
+                    category: 'куртки',
+                    icon: '🧥',
+                    image: '', // ссылка на фото
+                    description: 'Классическая кожаная куртка прямого кроя. Вещь, которая никогда не выйдет из моды. Материал: натуральная кожа.',
+                    sizes: ['S', 'M', 'L', 'XL']
+                },
+                { 
+                    id: 'jacket2', 
+                    name: 'Джинсовая куртка', 
+                    price: 6990, 
+                    category: 'куртки',
+                    icon: '🧥',
+                    image: '', // ссылка на фото
+                    description: 'Куртка из плотного денима. Универсальный вариант для межсезонья. Состав: 100% хлопок.',
+                    sizes: ['XS', 'S', 'M', 'L', 'XL']
+                },
+                { 
+                    id: 'shirt1', 
+                    name: 'Льняная рубашка', 
+                    price: 3290, 
+                    category: 'рубашки',
+                    icon: '👔',
+                    image: '', // ссылка на фото
+                    description: 'Легкая льняная рубашка. Идеально подходит для жаркой погоды. Состав: 100% лен.',
+                    sizes: ['S', 'M', 'L', 'XL']
+                },
+                { 
+                    id: 'shirt2', 
+                    name: 'Клетчатая рубашка', 
+                    price: 3590, 
+                    category: 'рубашки',
+                    icon: '👔',
+                    image: '', // ссылка на фото
+                    description: 'Рубашка в клетку из мягкого хлопка. Отлично сочетается с джинсами. Состав: 100% хлопок.',
+                    sizes: ['S', 'M', 'L', 'XL']
+                },
+                { 
+                    id: 'sneakers1', 
+                    name: 'Белые кросовки', 
+                    price: 5990, 
+                    category: 'кросовки',
+                    icon: '👟',
+                    image: '', // ссылка на фото
+                    description: 'Классические белые кросовки на толстой подошве. Подходят к любой одежде. Материал: экокожа, текстиль.',
+                    sizes: ['39', '40', '41', '42', '43', '44']
+                },
+                { 
+                    id: 'sneakers2', 
+                    name: 'Черные кросовки', 
+                    price: 6490, 
+                    category: 'кросовки',
+                    icon: '👟',
+                    image: '', // ссылка на фото
+                    description: 'Стильные черные кросовки с белой подошвой. Универсальная модель на каждый день. Материал: экокожа, текстиль.',
+                    sizes: ['39', '40', '41', '42', '43', '44']
+                }
             ];
 
             // Состояния
             let likedProducts = new Set();
-            let cart = [];
+            let cart = []; // { id, quantity, size }
             let orders = [];
             let currentCategory = 'all';
+            let currentProduct = null; // Товар в модальном окне
+            let selectedSize = ''; // Выбранный размер
 
             // Загрузка из localStorage
             try {
@@ -924,6 +1142,21 @@
                 const savedOrders = localStorage.getItem('orders');
                 if (savedOrders) orders = JSON.parse(savedOrders);
             } catch (e) {}
+
+            // ----- Элементы модального окна -----
+            const modal = document.getElementById('productModal');
+            const modalContent = document.getElementById('modalContent');
+            const closeModal = document.getElementById('closeModal');
+
+            closeModal.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
 
             // ----- Вспомогательные функции -----
             const toast = document.getElementById('toast');
@@ -965,6 +1198,77 @@
 
             function generateOrderId() {
                 return 'ORD-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+            }
+
+            // ----- Открытие модального окна товара -----
+            function openProductModal(product) {
+                currentProduct = product;
+                selectedSize = ''; // Сбрасываем выбранный размер
+                
+                let imageHtml = '';
+                if (product.image && product.image.trim() !== '') {
+                    imageHtml = `<img src="${product.image}" alt="${product.name}">`;
+                } else {
+                    imageHtml = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:80px;">${product.icon}</div>`;
+                }
+
+                const sizeButtons = product.sizes.map(size => 
+                    `<button class="size-btn" data-size="${size}">${size}</button>`
+                ).join('');
+
+                modalContent.innerHTML = `
+                    <div class="modal-product-image">${imageHtml}</div>
+                    <div class="modal-product-title">${product.name}</div>
+                    <div class="modal-product-price">${product.price.toLocaleString()} ₽</div>
+                    <div class="modal-product-description">${product.description}</div>
+                    <div class="size-selector-title">Выберите размер</div>
+                    <div class="size-buttons" id="sizeButtons">
+                        ${sizeButtons}
+                    </div>
+                    <button class="add-to-cart-modal-btn" id="addToCartFromModal">Добавить в корзину</button>
+                `;
+
+                modal.classList.add('active');
+
+                // Добавляем обработчики для кнопок размера
+                setTimeout(() => {
+                    const sizeBtns = document.querySelectorAll('.size-btn');
+                    sizeBtns.forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            sizeBtns.forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            selectedSize = btn.dataset.size;
+                        });
+                    });
+
+                    const addBtn = document.getElementById('addToCartFromModal');
+                    addBtn.addEventListener('click', () => {
+                        if (!selectedSize) {
+                            showToast('❌ Выберите размер', 1500);
+                            return;
+                        }
+
+                        // Добавляем в корзину с выбранным размером
+                        const existingItem = cart.find(item => 
+                            item.id === product.id && item.size === selectedSize
+                        );
+
+                        if (existingItem) {
+                            existingItem.quantity += 1;
+                        } else {
+                            cart.push({ 
+                                id: product.id, 
+                                quantity: 1, 
+                                size: selectedSize 
+                            });
+                        }
+
+                        saveCart();
+                        modal.classList.remove('active');
+                        showToast(`✅ ${product.name} (${selectedSize}) добавлен в корзину`, 2000);
+                        if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                    });
+                }, 100);
             }
 
             // ----- Баннеры -----
@@ -1050,11 +1354,9 @@
 
                     let imageHtml = '';
                     if (product.image && product.image.trim() !== '') {
-                        // Если есть ссылка на фото - показываем его
                         imageHtml = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`;
                         imageHtml += `<div class="placeholder-svg" style="display:none;"><svg viewBox="0 0 40 44" fill="none"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg></div>`;
                     } else {
-                        // Если фото нет - показываем заглушку
                         imageHtml = `<div class="placeholder-svg"><svg viewBox="0 0 40 44" fill="none"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg></div>`;
                     }
 
@@ -1068,7 +1370,6 @@
                                 <div class="product-category">${product.category}</div>
                                 <div class="product-title">${product.name}</div>
                                 <div class="product-price">${product.price.toLocaleString('ru-RU')} ₽</div>
-                                <button class="add-to-cart-btn" data-product-id="${product.id}">В корзину</button>
                             </div>
                         </div>
                     `;
@@ -1080,6 +1381,7 @@
                     grid.innerHTML = cardsHtml;
                 }
 
+                // Обработчики лайков
                 document.querySelectorAll('.like-button').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -1098,22 +1400,14 @@
                     });
                 });
 
-                document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const productId = btn.dataset.productId;
+                // Открытие модального окна при клике на карточку
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const productId = card.dataset.productId;
                         const product = products.find(p => p.id === productId);
-                        if (!product) return;
-
-                        const existing = cart.find(item => item.id === productId);
-                        if (existing) {
-                            existing.quantity += 1;
-                        } else {
-                            cart.push({ id: productId, quantity: 1 });
+                        if (product) {
+                            openProductModal(product);
                         }
-                        saveCart();
-                        showToast(`✅ ${product.name} добавлен в корзину`, 1200);
-                        if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
                     });
                 });
             }
@@ -1163,25 +1457,26 @@
                 let html = '';
                 let total = 0;
 
-                cart.forEach(item => {
+                cart.forEach((item, index) => {
                     const product = products.find(p => p.id === item.id);
                     if (!product) return;
                     const itemTotal = product.price * item.quantity;
                     total += itemTotal;
 
                     html += `
-                        <div class="cart-item" data-cart-id="${item.id}">
+                        <div class="cart-item" data-cart-index="${index}">
                             <div class="cart-item-image">${product.icon}</div>
                             <div class="cart-item-info">
                                 <div class="cart-item-title">${product.name}</div>
                                 <div class="cart-item-price">${product.price.toLocaleString()} ₽</div>
+                                <div class="cart-item-size">Размер: ${item.size}</div>
                                 <div class="cart-item-actions">
                                     <div class="cart-item-qty">
-                                        <button class="qty-btn" data-action="decr" data-id="${item.id}">−</button>
+                                        <button class="qty-btn" data-action="decr" data-index="${index}">−</button>
                                         <span class="qty-value">${item.quantity}</span>
-                                        <button class="qty-btn" data-action="incr" data-id="${item.id}">+</button>
+                                        <button class="qty-btn" data-action="incr" data-index="${index}">+</button>
                                     </div>
-                                    <span class="cart-item-remove" data-action="remove" data-id="${item.id}">🗑️</span>
+                                    <span class="cart-item-remove" data-action="remove" data-index="${index}">🗑️</span>
                                 </div>
                             </div>
                         </div>
@@ -1193,29 +1488,28 @@
 
                 container.querySelectorAll('[data-action="incr"]').forEach(btn => {
                     btn.addEventListener('click', () => {
-                        const id = btn.dataset.id;
-                        const item = cart.find(i => i.id === id);
-                        if (item) { item.quantity++; saveCart(); }
+                        const index = btn.dataset.index;
+                        cart[index].quantity++;
+                        saveCart();
                     });
                 });
+
                 container.querySelectorAll('[data-action="decr"]').forEach(btn => {
                     btn.addEventListener('click', () => {
-                        const id = btn.dataset.id;
-                        const item = cart.find(i => i.id === id);
-                        if (item) {
-                            if (item.quantity > 1) {
-                                item.quantity--;
-                            } else {
-                                cart = cart.filter(i => i.id !== id);
-                            }
-                            saveCart();
+                        const index = btn.dataset.index;
+                        if (cart[index].quantity > 1) {
+                            cart[index].quantity--;
+                        } else {
+                            cart.splice(index, 1);
                         }
+                        saveCart();
                     });
                 });
+
                 container.querySelectorAll('[data-action="remove"]').forEach(btn => {
                     btn.addEventListener('click', () => {
-                        const id = btn.dataset.id;
-                        cart = cart.filter(i => i.id !== id);
+                        const index = btn.dataset.index;
+                        cart.splice(index, 1);
                         saveCart();
                         showToast('🗑️ Товар удален', 1000);
                     });
@@ -1244,7 +1538,8 @@
                                 id: item.id,
                                 name: product.name,
                                 price: product.price,
-                                quantity: item.quantity
+                                quantity: item.quantity,
+                                size: item.size
                             };
                         });
                         const totalSum = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
@@ -1274,7 +1569,7 @@
 🛍 <b>Новый заказ в D&B!</b>
 
 🧾 Товары:
-${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`).join('\n')}
+${items.map(i => `• ${i.name} (размер ${i.size}) x${i.quantity} — ${i.price * i.quantity} ₽`).join('\n')}
 
 💰 Сумма: ${totalSum} ₽
 
@@ -1385,7 +1680,7 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                             <div class="order-products">
                                 ${order.items.map(item => `
                                     <div class="order-product-row">
-                                        <span>${item.name} x${item.quantity}</span>
+                                        <span>${item.name} (размер ${item.size}) x${item.quantity}</span>
                                         <span>${(item.price * item.quantity).toLocaleString()} ₽</span>
                                     </div>
                                 `).join('')}
