@@ -25,6 +25,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Анимированная заставка - МОРФИНГ БУКВ */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -340,6 +341,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 16px;
+            min-height: 200px;
         }
 
         .product-card {
@@ -362,13 +364,11 @@
 
         .product-image {
             width: 100%;
-            aspect-ratio: 1 / 1.1;
+            aspect-ratio: 1 / 1;
             background-color: #fafafa;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #aaa;
-            font-size: 40px;
             position: relative;
             overflow: hidden;
         }
@@ -377,12 +377,17 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
+            object-position: center;
+            transition: transform 0.3s ease;
+        }
+
+        .product-image img:hover {
+            transform: scale(1.05);
         }
 
         .product-image .placeholder-svg {
-            width: 60%;
-            height: 60%;
+            width: 80%;
+            height: 80%;
             opacity: 0.7;
         }
 
@@ -494,19 +499,59 @@
             z-index: 2001;
         }
 
-        .modal-product-image {
+        /* Галерея свайпов */
+        .swipe-gallery {
+            position: relative;
             width: 100%;
-            aspect-ratio: 1 / 1;
-            background: #f5f5f5;
-            border-radius: 24px;
             overflow: hidden;
-            margin-bottom: 20px;
+            touch-action: pan-y pinch-zoom;
         }
 
-        .modal-product-image img {
+        .gallery-container {
+            display: flex;
+            transition: transform 0.3s ease;
+            cursor: grab;
+        }
+
+        .gallery-container:active {
+            cursor: grabbing;
+        }
+
+        .gallery-slide {
+            flex: 0 0 100%;
+            aspect-ratio: 3 / 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+        }
+
+        .gallery-slide img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        .gallery-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 12px 0 8px;
+        }
+
+        .gallery-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .gallery-dot.active {
+            width: 24px;
+            border-radius: 12px;
+            background: #000;
         }
 
         .modal-product-title {
@@ -588,6 +633,33 @@
             transform: scale(0.98);
         }
 
+        /* Бесконечная лента */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            grid-column: 1 / -1;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f0f0f0;
+            border-top: 3px solid #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .end-message {
+            text-align: center;
+            padding: 20px;
+            color: #8e8e93;
+            grid-column: 1 / -1;
+            font-size: 14px;
+        }
+
+        /* Корзина и заказы */
         .cart-header, .favorites-header, .orders-header {
             display: flex;
             justify-content: space-between;
@@ -697,14 +769,14 @@
         }
 
         .cart-item-image, .favorite-item-image {
-            width: 64px;
-            height: 64px;
+            width: 75px;
+            height: 75px;
             background: #eaeaea;
             border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 36px;
             flex-shrink: 0;
             overflow: hidden;
         }
@@ -713,6 +785,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
         }
 
         .cart-item-info, .favorite-item-info {
@@ -860,6 +933,15 @@
             transform: translateX(-50%) scale(1);
         }
 
+        .footer-note {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 12px;
+            color: #c6c6c8;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 20px;
+        }
+
         @media (max-width: 380px) {
             .products-grid {
                 gap: 12px;
@@ -868,15 +950,6 @@
                 font-size: 13px;
                 min-width: 60px;
             }
-        }
-
-        .footer-note {
-            margin-top: 32px;
-            text-align: center;
-            font-size: 12px;
-            color: #c6c6c8;
-            border-top: 1px solid #f0f0f0;
-            padding-top: 20px;
         }
     </style>
 </head>
@@ -909,7 +982,7 @@
         </div>
 
         <!-- Каталог -->
-        <div id="catalog-tab" class="tab-content">
+        <div id="catalog-tab" class="tab-content" style="overflow-y: auto; max-height: calc(100vh - 250px);">
             <h2 class="section-title">Свежая коллекция D&B</h2>
             <div class="category-filter" id="categoryFilter">
                 <button class="category-btn active" data-category="all">Все</button>
@@ -956,7 +1029,7 @@
             <div id="ordersContainer" class="orders-items"></div>
         </div>
 
-        <div class="footer-note">D&B · выбор размера · детали товара</div>
+        <div class="footer-note">D&B · свайп-галерея · бесконечная лента</div>
     </div>
 
     <!-- Модальное окно товара -->
@@ -974,8 +1047,8 @@
     <script>
         (function() {
             // ⚠️ ВАШИ ДАННЫЕ (ЗАМЕНИТЕ) ⚠️
-            const YOUR_TELEGRAM_ID = 123456789;   // Ваш ID (узнайте у @userinfobot)
-            const BOT_TOKEN = 'ВАШ_ТОКЕН_БОТА';    // Токен вашего бота
+            const YOUR_TELEGRAM_ID = 1445393854;   // Ваш ID (узнайте у @userinfobot)
+            const BOT_TOKEN = '8744295101:AAF0XX63H2XdMrlTXxWwiIJFWSrG-kFZKxE';    // Токен вашего бота
 
             // Telegram
             const tg = window.Telegram?.WebApp;
@@ -1003,133 +1076,133 @@
             const products = [
                 { 
                     id: 'tshirt1', 
-                    name: 'Хлопковая футболка D&B', 
-                    price: 2490, 
-                    category: 'футболки',
-                    icon: '👕',
-                    image: '', // ссылка на фото
-                    description: 'Классическая хлопковая футболка из мягкого материала. Идеально подходит для повседневной носки. Состав: 100% хлопок.',
-                    sizes: ['XS', 'S', 'M', 'L', 'XL']
+                    name: 'Джинсы', 
+                    price: 0, 
+                    category: 'джинсы',
+                    icon: '👖',
+                    images: ['j1.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
                 },
-                { 
+                                { 
                     id: 'tshirt2', 
-                    name: 'Футболка оверсайз', 
-                    price: 2790, 
-                    category: 'футболки',
-                    icon: '👕',
-                    image: '', // ссылка на фото
-                    description: 'Модная футболка свободного кроя. Подходит для создания стильных образов. Состав: 95% хлопок, 5% эластан.',
-                    sizes: ['S', 'M', 'L', 'XL']
-                },
-                { 
-                    id: 'jeans1', 
-                    name: 'Классические джинсы', 
-                    price: 4990, 
+                    name: 'Джинсы', 
+                    price: 0, 
                     category: 'джинсы',
                     icon: '👖',
-                    image: '', // ссылка на фото
-                    description: 'Классические джинсы прямого кроя. Универсальная модель на каждый день. Состав: 98% хлопок, 2% эластан.',
-                    sizes: ['28', '30', '32', '34', '36']
+                    images: ['j2.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
                 },
-                { 
-                    id: 'jeans2', 
-                    name: 'Джинсы скинни', 
-                    price: 5290, 
+                                { 
+                    id: 'tshirt3', 
+                    name: 'Джинсы', 
+                    price: 0, 
                     category: 'джинсы',
                     icon: '👖',
-                    image: '', // ссылка на фото
-                    description: 'Облегающие джинсы скинни. Подчеркивают фигуру и отлично тянутся. Состав: 97% хлопок, 3% эластан.',
-                    sizes: ['26', '28', '30', '32', '34']
+                    images: ['j3.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
                 },
-                { 
-                    id: 'pants1', 
-                    name: 'Спортивные штаны', 
-                    price: 2790, 
-                    category: 'штаны',
+                                { 
+                    id: 'tshirt4', 
+                    name: 'Джинсы', 
+                    price: 0, 
+                    category: 'джинсы',
                     icon: '👖',
-                    image: '', // ссылка на фото
-                    description: 'Удобные спортивные штаны из мягкого трикотажа. Подойдут для тренировок и дома. Состав: 100% хлопок.',
-                    sizes: ['XS', 'S', 'M', 'L', 'XL']
+                    images: ['j4.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
                 },
-                { 
-                    id: 'pants2', 
-                    name: 'Штаны карго', 
-                    price: 3590, 
-                    category: 'штаны',
+                     { 
+                    id: 'tshirt5', 
+                    name: 'Джинсы', 
+                    price: 0, 
+                    category: 'джинсы',
                     icon: '👖',
-                    image: '', // ссылка на фото
-                    description: 'Стильные штаны карго с боковыми карманами. Универсальный вариант для города. Состав: 100% хлопок.',
-                    sizes: ['S', 'M', 'L', 'XL']
+                    images: ['j5.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
                 },
-                { 
-                    id: 'jacket1', 
-                    name: 'Кожаная куртка', 
-                    price: 12990, 
-                    category: 'куртки',
-                    icon: '🧥',
-                    image: '', // ссылка на фото
-                    description: 'Классическая кожаная куртка прямого кроя. Вещь, которая никогда не выйдет из моды. Материал: натуральная кожа.',
-                    sizes: ['S', 'M', 'L', 'XL']
+                     { 
+                    id: 'tshirt6', 
+                    name: 'Джинсы', 
+                    price: 0, 
+                    category: 'джинсы',
+                    icon: '👖',
+                    images: ['j6.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
                 },
-                { 
-                    id: 'jacket2', 
-                    name: 'Джинсовая куртка', 
-                    price: 6990, 
-                    category: 'куртки',
-                    icon: '🧥',
-                    image: '', // ссылка на фото
-                    description: 'Куртка из плотного денима. Универсальный вариант для межсезонья. Состав: 100% хлопок.',
-                    sizes: ['XS', 'S', 'M', 'L', 'XL']
+                     { 
+                    id: 'tshirt7', 
+                    name: 'Джинсы', 
+                    price: 0, 
+                    category: 'джинсы',
+                    icon: '👖',
+                    images: ['j7.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
                 },
-                { 
-                    id: 'shirt1', 
-                    name: 'Льняная рубашка', 
-                    price: 3290, 
-                    category: 'рубашки',
-                    icon: '👔',
-                    image: '', // ссылка на фото
-                    description: 'Легкая льняная рубашка. Идеально подходит для жаркой погоды. Состав: 100% лен.',
-                    sizes: ['S', 'M', 'L', 'XL']
+                     { 
+                    id: 'tshirt8', 
+                    name: 'Джинсы', 
+                    price: 0, 
+                    category: 'джинсы',
+                    icon: '👖',
+                    images: ['j8.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
                 },
-                { 
-                    id: 'shirt2', 
-                    name: 'Клетчатая рубашка', 
-                    price: 3590, 
-                    category: 'рубашки',
-                    icon: '👔',
-                    image: '', // ссылка на фото
-                    description: 'Рубашка в клетку из мягкого хлопка. Отлично сочетается с джинсами. Состав: 100% хлопок.',
-                    sizes: ['S', 'M', 'L', 'XL']
+                           { 
+                    id: 'tshirt9', 
+                    name: 'Джинсы', 
+                    price: 0, 
+                    category: 'джинсы',
+                    icon: '👖',
+                    images: ['j9.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
                 },
-                { 
-                    id: 'sneakers1', 
-                    name: 'Белые кросовки', 
-                    price: 5990, 
-                    category: 'кросовки',
-                    icon: '👟',
-                    image: '', // ссылка на фото
-                    description: 'Классические белые кросовки на толстой подошве. Подходят к любой одежде. Материал: экокожа, текстиль.',
-                    sizes: ['39', '40', '41', '42', '43', '44']
+                           { 
+                    id: 'tshirt10', 
+                    name: 'Джинсы', 
+                    price: 0, 
+                    category: 'джинсы',
+                    icon: '👖',
+                    images: ['j10.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
                 },
-                { 
-                    id: 'sneakers2', 
-                    name: 'Черные кросовки', 
-                    price: 6490, 
-                    category: 'кросовки',
-                    icon: '👟',
-                    image: '', // ссылка на фото
-                    description: 'Стильные черные кросовки с белой подошвой. Универсальная модель на каждый день. Материал: экокожа, текстиль.',
-                    sizes: ['39', '40', '41', '42', '43', '44']
-                }
+                           { 
+                    id: 'tshirt11', 
+                    name: 'Джинсы', 
+                    price: 0, 
+                    category: 'джинсы',
+                    icon: '👖',
+                    images: ['j11.jpg'], // Замените на свои фото
+                    description: '',
+                    sizes: ['S']
+                },
+                
+
             ];
 
             // Состояния
             let likedProducts = new Set();
-            let cart = []; // { id, quantity, size }
+            let cart = [];
             let orders = [];
             let currentCategory = 'all';
-            let currentProduct = null; // Товар в модальном окне
-            let selectedSize = ''; // Выбранный размер
+            let currentProduct = null;
+            let selectedSize = '';
+
+            // Бесконечная лента
+            let allProducts = [...products];
+            let displayedProducts = [];
+            let currentPage = 1;
+            const productsPerPage = 8;
+            let isLoading = false;
+            let hasMore = true;
 
             // Загрузка из localStorage
             try {
@@ -1200,24 +1273,163 @@
                 return 'ORD-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
             }
 
-            // ----- Открытие модального окна товара -----
+            // ----- Загрузка товаров порциями (бесконечная лента) -----
+            function loadMoreProducts() {
+                if (isLoading || !hasMore) return;
+                
+                isLoading = true;
+                
+                const grid = document.getElementById('productsGrid');
+                const spinner = document.createElement('div');
+                spinner.className = 'loading-spinner';
+                spinner.id = 'loadingSpinner';
+                spinner.innerHTML = '<div class="spinner"></div>';
+                grid.appendChild(spinner);
+                
+                setTimeout(() => {
+                    const start = (currentPage - 1) * productsPerPage;
+                    const end = start + productsPerPage;
+                    const newProducts = allProducts.slice(start, end);
+                    
+                    if (newProducts.length > 0) {
+                        displayedProducts = [...displayedProducts, ...newProducts];
+                        renderProducts(displayedProducts);
+                        currentPage++;
+                        
+                        if (end >= allProducts.length) {
+                            hasMore = false;
+                            const endMessage = document.createElement('div');
+                            endMessage.className = 'end-message';
+                            endMessage.textContent = '🏁 Вы просмотрели все товары';
+                            grid.appendChild(endMessage);
+                        }
+                    } else {
+                        hasMore = false;
+                    }
+                    
+                    const spinnerEl = document.getElementById('loadingSpinner');
+                    if (spinnerEl) spinnerEl.remove();
+                    
+                    isLoading = false;
+                }, 500);
+            }
+
+            // ----- Функция renderProducts -----
+            function renderProducts(productsToRender = displayedProducts) {
+                const grid = document.getElementById('productsGrid');
+                if (!grid) return;
+
+                if (productsToRender.length === 0) {
+                    if (currentPage === 1) {
+                        grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #8e8e93;">Товары не найдены</div>';
+                    }
+                    return;
+                }
+
+                let cardsHtml = '';
+                productsToRender.forEach(product => {
+                    const isLiked = likedProducts.has(product.id);
+                    const likeSymbol = isLiked ? '❤️' : '🤍';
+                    const likeClass = isLiked ? 'like-button liked' : 'like-button';
+
+                    let imageHtml = '';
+                    const productImage = (product.images && product.images[0]) || product.image || '';
+                    
+                    if (productImage && productImage.trim() !== '') {
+                        imageHtml = `<img src="${productImage}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`;
+                        imageHtml += `<div class="placeholder-svg" style="display:none;"><svg viewBox="0 0 40 44" fill="none"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg></div>`;
+                    } else {
+                        imageHtml = `<div class="placeholder-svg"><svg viewBox="0 0 40 44" fill="none"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg></div>`;
+                    }
+
+                    cardsHtml += `
+                        <div class="product-card" data-product-id="${product.id}">
+                            <div class="product-image">
+                                ${imageHtml}
+                                <div class="${likeClass}" data-like-id="${product.id}">${likeSymbol}</div>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-category">${product.category}</div>
+                                <div class="product-title">${product.name}</div>
+                                <div class="product-price">${product.price.toLocaleString('ru-RU')} ₽</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                grid.innerHTML = cardsHtml;
+
+                document.querySelectorAll('.like-button').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const productId = btn.dataset.likeId;
+                        if (likedProducts.has(productId)) {
+                            likedProducts.delete(productId);
+                            btn.classList.remove('liked');
+                            btn.textContent = '🤍';
+                        } else {
+                            likedProducts.add(productId);
+                            btn.classList.add('liked');
+                            btn.textContent = '❤️';
+                        }
+                        saveLikes();
+                        showToast(likedProducts.has(productId) ? '❤️ Добавлено в избранное' : '🤍 Убрано из избранного', 1000);
+                    });
+                });
+
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const productId = card.dataset.productId;
+                        const product = allProducts.find(p => p.id === productId);
+                        if (product) {
+                            openProductModal(product);
+                        }
+                    });
+                });
+            }
+
+            // ----- Функция openProductModal с галереей -----
             function openProductModal(product) {
                 currentProduct = product;
-                selectedSize = ''; // Сбрасываем выбранный размер
+                selectedSize = '';
                 
-                let imageHtml = '';
-                if (product.image && product.image.trim() !== '') {
-                    imageHtml = `<img src="${product.image}" alt="${product.name}">`;
-                } else {
-                    imageHtml = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:80px;">${product.icon}</div>`;
-                }
+                const productImages = product.images || [product.image, product.image, product.image].filter(img => img);
+                
+                let imagesHtml = '';
+                productImages.forEach((img, index) => {
+                    if (img && img.trim() !== '') {
+                        imagesHtml += `
+                            <div class="gallery-slide">
+                                <img src="${img}" alt="${product.name} - фото ${index + 1}">
+                            </div>
+                        `;
+                    } else {
+                        imagesHtml += `
+                            <div class="gallery-slide">
+                                <div style="font-size: 80px;">${product.icon}</div>
+                            </div>
+                        `;
+                    }
+                });
+
+                let dotsHtml = '';
+                productImages.forEach((_, index) => {
+                    dotsHtml += `<span class="gallery-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></span>`;
+                });
 
                 const sizeButtons = product.sizes.map(size => 
                     `<button class="size-btn" data-size="${size}">${size}</button>`
                 ).join('');
 
                 modalContent.innerHTML = `
-                    <div class="modal-product-image">${imageHtml}</div>
+                    <div class="swipe-gallery">
+                        <div class="gallery-container" id="galleryContainer">
+                            ${imagesHtml}
+                        </div>
+                        <div class="gallery-dots" id="galleryDots">
+                            ${dotsHtml}
+                        </div>
+                    </div>
                     <div class="modal-product-title">${product.name}</div>
                     <div class="modal-product-price">${product.price.toLocaleString()} ₽</div>
                     <div class="modal-product-description">${product.description}</div>
@@ -1230,8 +1442,69 @@
 
                 modal.classList.add('active');
 
-                // Добавляем обработчики для кнопок размера
                 setTimeout(() => {
+                    const container = document.getElementById('galleryContainer');
+                    const dots = document.querySelectorAll('.gallery-dot');
+                    let currentIndex = 0;
+                    let startX = 0;
+                    let isDragging = false;
+
+                    function updateGallery(index) {
+                        if (index < 0) index = 0;
+                        if (index >= productImages.length) index = productImages.length - 1;
+                        
+                        currentIndex = index;
+                        container.style.transform = `translateX(-${currentIndex * 100}%)`;
+                        
+                        dots.forEach((dot, i) => {
+                            if (i === currentIndex) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        });
+                    }
+
+                    container.addEventListener('touchstart', (e) => {
+                        startX = e.touches[0].clientX;
+                        isDragging = true;
+                    }, { passive: true });
+
+                    container.addEventListener('touchmove', (e) => {
+                        if (!isDragging) return;
+                        e.preventDefault();
+                        
+                        const currentX = e.touches[0].clientX;
+                        const diff = currentX - startX;
+                        const movePercent = (diff / container.offsetWidth) * 100;
+                        
+                        container.style.transform = `translateX(calc(-${currentIndex * 100}% + ${movePercent}px))`;
+                    }, { passive: false });
+
+                    container.addEventListener('touchend', (e) => {
+                        if (!isDragging) return;
+                        isDragging = false;
+                        
+                        const endX = e.changedTouches[0].clientX;
+                        const diff = endX - startX;
+                        
+                        if (Math.abs(diff) > 50) {
+                            if (diff > 0 && currentIndex > 0) {
+                                currentIndex--;
+                            } else if (diff < 0 && currentIndex < productImages.length - 1) {
+                                currentIndex++;
+                            }
+                        }
+                        
+                        updateGallery(currentIndex);
+                    });
+
+                    dots.forEach((dot, index) => {
+                        dot.addEventListener('click', () => {
+                            updateGallery(index);
+                        });
+                    });
+
                     const sizeBtns = document.querySelectorAll('.size-btn');
                     sizeBtns.forEach(btn => {
                         btn.addEventListener('click', () => {
@@ -1248,7 +1521,6 @@
                             return;
                         }
 
-                        // Добавляем в корзину с выбранным размером
                         const existingItem = cart.find(item => 
                             item.id === product.id && item.size === selectedSize
                         );
@@ -1336,82 +1608,6 @@
                 `;
             }
 
-            // ----- Каталог -----
-            function renderProducts() {
-                const grid = document.getElementById('productsGrid');
-                if (!grid) return;
-
-                let filteredProducts = products;
-                if (currentCategory !== 'all') {
-                    filteredProducts = products.filter(p => p.category === currentCategory);
-                }
-
-                let cardsHtml = '';
-                filteredProducts.forEach(product => {
-                    const isLiked = likedProducts.has(product.id);
-                    const likeSymbol = isLiked ? '❤️' : '🤍';
-                    const likeClass = isLiked ? 'like-button liked' : 'like-button';
-
-                    let imageHtml = '';
-                    if (product.image && product.image.trim() !== '') {
-                        imageHtml = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`;
-                        imageHtml += `<div class="placeholder-svg" style="display:none;"><svg viewBox="0 0 40 44" fill="none"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg></div>`;
-                    } else {
-                        imageHtml = `<div class="placeholder-svg"><svg viewBox="0 0 40 44" fill="none"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg></div>`;
-                    }
-
-                    cardsHtml += `
-                        <div class="product-card" data-product-id="${product.id}">
-                            <div class="product-image">
-                                ${imageHtml}
-                                <div class="${likeClass}" data-like-id="${product.id}">${likeSymbol}</div>
-                            </div>
-                            <div class="product-info">
-                                <div class="product-category">${product.category}</div>
-                                <div class="product-title">${product.name}</div>
-                                <div class="product-price">${product.price.toLocaleString('ru-RU')} ₽</div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                if (filteredProducts.length === 0) {
-                    grid.innerHTML = '<div style="text-align: center; padding: 40px; color: #8e8e93;">Товары не найдены</div>';
-                } else {
-                    grid.innerHTML = cardsHtml;
-                }
-
-                // Обработчики лайков
-                document.querySelectorAll('.like-button').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const productId = btn.dataset.likeId;
-                        if (likedProducts.has(productId)) {
-                            likedProducts.delete(productId);
-                            btn.classList.remove('liked');
-                            btn.textContent = '🤍';
-                        } else {
-                            likedProducts.add(productId);
-                            btn.classList.add('liked');
-                            btn.textContent = '❤️';
-                        }
-                        saveLikes();
-                        showToast(likedProducts.has(productId) ? '❤️ Добавлено в избранное' : '🤍 Убрано из избранного', 1000);
-                    });
-                });
-
-                // Открытие модального окна при клике на карточку
-                document.querySelectorAll('.product-card').forEach(card => {
-                    card.addEventListener('click', () => {
-                        const productId = card.dataset.productId;
-                        const product = products.find(p => p.id === productId);
-                        if (product) {
-                            openProductModal(product);
-                        }
-                    });
-                });
-            }
-
             // ----- Категории -----
             function initCategoryFilter() {
                 const categoryBtns = document.querySelectorAll('.category-btn');
@@ -1420,7 +1616,18 @@
                         categoryBtns.forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
                         currentCategory = btn.dataset.category;
-                        renderProducts();
+                        
+                        // Фильтрация и сброс пагинации
+                        if (currentCategory === 'all') {
+                            allProducts = [...products];
+                        } else {
+                            allProducts = products.filter(p => p.category === currentCategory);
+                        }
+                        
+                        currentPage = 1;
+                        hasMore = true;
+                        displayedProducts = allProducts.slice(0, productsPerPage);
+                        renderProducts(displayedProducts);
                         
                         const categoryNames = {
                             'all': 'Все товары',
@@ -1564,7 +1771,6 @@
 
                         showToast('⏳ Заказ создан, ожидайте подтверждения', 2000);
 
-                        // Отправляем уведомление продавцу
                         const message = `
 🛍 <b>Новый заказ в D&B!</b>
 
@@ -1696,6 +1902,19 @@ ${items.map(i => `• ${i.name} (размер ${i.size}) x${i.quantity} — ${i.
                 container.innerHTML = html;
             }
 
+            // ----- Бесконечная лента -----
+            function initInfiniteScroll() {
+                const catalogTab = document.getElementById('catalog-tab');
+                
+                catalogTab.addEventListener('scroll', () => {
+                    const { scrollTop, scrollHeight, clientHeight } = catalogTab;
+                    
+                    if (scrollHeight - scrollTop - clientHeight < 50) {
+                        loadMoreProducts();
+                    }
+                });
+            }
+
             // ----- Вкладки -----
             function initTabs() {
                 const tabs = document.querySelectorAll('.tab');
@@ -1733,13 +1952,18 @@ ${items.map(i => `• ${i.name} (размер ${i.size}) x${i.quantity} — ${i.
 
             // ----- Запуск -----
             function init() {
+                // Инициализация бесконечной ленты
+                allProducts = [...products];
+                displayedProducts = allProducts.slice(0, productsPerPage);
+                
                 renderBanners();
                 renderProfile();
-                renderProducts();
+                renderProducts(displayedProducts);
                 updateCartBadge();
                 updateFavoritesBadge();
                 initTabs();
                 initCategoryFilter();
+                initInfiniteScroll();
                 renderCart();
                 renderFavorites();
                 renderOrders();
