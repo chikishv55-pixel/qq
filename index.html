@@ -1,15 +1,13 @@
-
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>QQ · магазин одежды</title>
+    <title>D&B · магазин одежды</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        /* Все стили остаются точно такими же */
         * {
             margin: 0;
             padding: 0;
@@ -220,6 +218,7 @@
             border: 1px solid #eaeaea;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
             transition: transform 0.2s;
+            cursor: pointer;
         }
 
         .banner:active {
@@ -470,15 +469,14 @@
             transform: scale(0.98);
         }
 
-        /* Стили для корзины, избранного и заказов */
-        .cart-header, .favorites-header, .orders-header, .management-header {
+        .cart-header, .favorites-header, .orders-header {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
             margin-bottom: 16px;
         }
 
-        .cart-title, .favorites-title, .orders-title, .management-title {
+        .cart-title, .favorites-title, .orders-title {
             font-size: 20px;
             font-weight: 600;
         }
@@ -498,17 +496,17 @@
             background: #ffe4e0;
         }
 
-        .cart-items, .favorites-items, .orders-items, .management-items {
+        .cart-items, .favorites-items, .orders-items {
             display: flex;
             flex-direction: column;
             gap: 16px;
             margin-bottom: 24px;
-            max-height: 60vh;
+            max-height: 50vh;
             overflow-y: auto;
             padding-right: 4px;
         }
 
-        .cart-item, .favorite-item, .order-item, .management-item {
+        .cart-item, .favorite-item, .order-item {
             display: flex;
             align-items: center;
             gap: 14px;
@@ -518,54 +516,53 @@
             border: 1px solid #f0f0f0;
         }
 
-        .order-item, .management-item {
+        .order-item {
             flex-direction: column;
             align-items: flex-start;
         }
 
-        .order-header, .management-header-item {
+        .order-header {
             display: flex;
             justify-content: space-between;
             width: 100%;
             margin-bottom: 8px;
         }
 
-        .order-id, .management-order-id {
+        .order-id {
             font-weight: 600;
             color: #000;
         }
 
-        .order-date, .management-date {
+        .order-date {
             font-size: 13px;
             color: #8e8e93;
         }
 
-        .order-products, .management-products {
+        .order-products {
             width: 100%;
             padding-left: 12px;
             border-left: 2px solid #e0e0e0;
             margin-bottom: 8px;
         }
 
-        .order-product-row, .management-product-row {
+        .order-product-row {
             display: flex;
             justify-content: space-between;
             font-size: 14px;
             margin: 4px 0;
         }
 
-        .order-total, .management-total {
+        .order-total {
             font-weight: 600;
             margin: 8px 0 4px;
         }
 
-        .order-status, .management-status {
+        .order-status {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-top: 8px;
             width: 100%;
-            flex-wrap: wrap;
         }
 
         .status-badge {
@@ -578,44 +575,6 @@
         .status-pending {
             background: #fff3e0;
             color: #e67e22;
-        }
-
-        .status-confirmed {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .status-sold {
-            background: #e8f5e8;
-            color: #2e7d32;
-        }
-
-        .confirm-order-btn, .mark-sold-btn {
-            background: #000;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            padding: 8px 16px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            margin-left: auto;
-        }
-
-        .mark-sold-btn {
-            background: #2e7d32;
-        }
-
-        .confirm-order-btn:active, .mark-sold-btn:active {
-            opacity: 0.8;
-        }
-
-        .buyer-info {
-            font-size: 13px;
-            color: #6c6c70;
-            margin: 4px 0;
-            padding: 4px 0;
-            border-top: 1px dashed #e0e0e0;
         }
 
         .cart-item-image, .favorite-item-image {
@@ -738,7 +697,7 @@
             cursor: not-allowed;
         }
 
-        .empty-cart, .empty-favorites, .empty-orders, .empty-management {
+        .empty-cart, .empty-favorites, .empty-orders {
             text-align: center;
             padding: 48px 20px;
             color: #8e8e93;
@@ -794,14 +753,20 @@
             border-top: 1px solid #f0f0f0;
             padding-top: 20px;
         }
+
+        /* Инструкция по добавлению товаров (будет скрыта) */
+        .instruction-hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <!-- Анимированная заставка -->
     <div class="splash-screen" id="splash">
         <div class="splash-logo">
-            <span class="letter">Q</span>
-            <span class="letter">Q</span>
+            <span class="letter">D</span>
+            <span class="letter">&</span>
+            <span class="letter">B</span>
         </div>
         <div class="splash-title">магазин одежды</div>
         <div class="splash-loader"></div>
@@ -816,18 +781,16 @@
         <div class="banners-section" id="bannersContainer"></div>
 
         <!-- Вкладки -->
-        <div class="tabs" id="tabsContainer">
+        <div class="tabs">
             <div class="tab active" data-tab="catalog">Каталог</div>
             <div class="tab" data-tab="cart">Корзина <span id="cart-count-badge" style="background:#000; color:white; border-radius:20px; padding:2px 8px; margin-left:6px; font-size:13px;">0</span></div>
             <div class="tab" data-tab="favorites">❤️ <span id="favorites-count-badge" style="background:#f0f0f0; color:#000; border-radius:20px; padding:2px 8px; margin-left:4px; font-size:13px;">0</span></div>
             <div class="tab" data-tab="orders">📦 Мои заказы</div>
-            <!-- Вкладка для продавца (будет показана только вам) -->
-            <div class="tab" data-tab="management" id="sellerTab" style="display: none;">👑 Управление</div>
         </div>
 
         <!-- Каталог -->
         <div id="catalog-tab" class="tab-content">
-            <h2 class="section-title">Свежая коллекция QQ</h2>
+            <h2 class="section-title">Свежая коллекция D&B</h2>
             <div class="category-filter" id="categoryFilter">
                 <button class="category-btn active" data-category="all">Все</button>
                 <button class="category-btn" data-category="футболки">Футболки</button>
@@ -865,7 +828,7 @@
             <div id="favoritesItemsContainer" class="favorites-items"></div>
         </div>
 
-        <!-- Мои заказы (для покупателя) -->
+        <!-- Мои заказы -->
         <div id="orders-tab" class="tab-content hidden">
             <div class="orders-header">
                 <div class="orders-title">Мои заказы</div>
@@ -873,15 +836,7 @@
             <div id="ordersContainer" class="orders-items"></div>
         </div>
 
-        <!-- Управление заказами (только для продавца) -->
-        <div id="management-tab" class="tab-content hidden">
-            <div class="management-header">
-                <div class="management-title">👑 Управление заказами</div>
-            </div>
-            <div id="managementContainer" class="management-items"></div>
-        </div>
-
-        <div class="footer-note">QQ · морфинг букв · управление заказами</div>
+        <div class="footer-note">D&B · морфинг букв · баннеры · сортировка</div>
     </div>
 
     <div id="toast" class="toast-message">👍</div>
@@ -891,8 +846,8 @@
     <script>
         (function() {
             // ⚠️ ВАШИ ДАННЫЕ (ЗАМЕНИТЕ) ⚠️
-            const YOUR_TELEGRAM_ID = 1445393854;   // Ваш ID (узнайте у @userinfobot)
-            const BOT_TOKEN = '8393966699:AAF9vJ4VD6pnzqT7tQnmfsTSOUHFXMjmFLE';    // Токен вашего бота
+            const YOUR_TELEGRAM_ID = 123456789;   // Ваш ID (узнайте у @userinfobot)
+            const BOT_TOKEN = 'ВАШ_ТОКЕН_БОТА';    // Токен вашего бота
 
             // Telegram
             const tg = window.Telegram?.WebApp;
@@ -916,113 +871,46 @@
                 userError = true;
             }
 
-            // 🔥 Проверяем, является ли текущий пользователь ПРОДАВЦОМ (ВАМИ)
-            const isSeller = user && user.id === YOUR_TELEGRAM_ID;
+            // ============================================================
+            // 🛍️ ИНСТРУКЦИЯ ПО ДОБАВЛЕНИЮ ТОВАРОВ
+            // ============================================================
+            // 
+            // 1. Чтобы добавить свой товар, скопируйте строку ниже:
+            //    { id: 'уникальный-id', name: 'Название товара', price: 9999, category: 'категория', icon: '👕', image: 'https://ссылка-на-фото.jpg' }
+            //
+            // 2. Категории могут быть: 'футболки', 'джинсы', 'штаны', 'куртки', 'рубашки', 'кросовки'
+            //
+            // 3. id должен быть уникальным для каждого товара (используйте английские буквы и цифры)
+            //
+            // 4. price указывайте в рублях (только число)
+            //
+            // 5. icon - это эмодзи для отображения, если фото не загрузится
+            //
+            // 6. image - прямая ссылка на фото. Как получить ссылку:
+            //    - Загрузите фото в Telegram (например, в "Избранное")
+            //    - Откройте фото в браузере (Telegram Web) и скопируйте URL
+            //    - Или используйте любой фотохостинг (imgbb.com, postimages.org)
+            //
+            // 7. После добавления товаров, удалите этот комментарий или оставьте как памятку
+            // ============================================================
 
-            // ----- ТОВАРЫ С КАТЕГОРИЯМИ -----
+            // ----- ТОВАРЫ (ЗДЕСЬ ВЫ ДОБАВЛЯЕТЕ СВОИ) -----
             const products = [
+                // Пример товара с фото:
                 { 
                     id: 'tshirt1', 
-                    name: 'Хлопковая футболка QQ', 
+                    name: 'Хлопковая футболка D&B', 
                     price: 2490, 
                     category: 'футболки',
                     icon: '👕',
-                    image: '' // ссылка на фото
-                },
-                { 
-                    id: 'tshirt2', 
-                    name: 'Футболка оверсайз', 
-                    price: 2790, 
-                    category: 'футболки',
-                    icon: '👕',
-                    image: '' 
-                },
-                { 
-                    id: 'jeans1', 
-                    name: 'Классические джинсы', 
-                    price: 4990, 
-                    category: 'джинсы',
-                    icon: '👖',
-                    image: '' 
-                },
-                { 
-                    id: 'jeans2', 
-                    name: 'Джинсы скинни', 
-                    price: 5290, 
-                    category: 'джинсы',
-                    icon: '👖',
-                    image: '' 
-                },
-                { 
-                    id: 'pants1', 
-                    name: 'Спортивные штаны', 
-                    price: 2790, 
-                    category: 'штаны',
-                    icon: '👖',
-                    image: '' 
-                },
-                { 
-                    id: 'pants2', 
-                    name: 'Штаны карго', 
-                    price: 3590, 
-                    category: 'штаны',
-                    icon: '👖',
-                    image: '' 
-                },
-                { 
-                    id: 'jacket1', 
-                    name: 'Кожаная куртка', 
-                    price: 12990, 
-                    category: 'куртки',
-                    icon: '🧥',
-                    image: '' 
-                },
-                { 
-                    id: 'jacket2', 
-                    name: 'Джинсовая куртка', 
-                    price: 6990, 
-                    category: 'куртки',
-                    icon: '🧥',
-                    image: '' 
-                },
-                { 
-                    id: 'shirt1', 
-                    name: 'Льняная рубашка', 
-                    price: 3290, 
-                    category: 'рубашки',
-                    icon: '👔',
-                    image: '' 
-                },
-                { 
-                    id: 'shirt2', 
-                    name: 'Клетчатая рубашка', 
-                    price: 3590, 
-                    category: 'рубашки',
-                    icon: '👔',
-                    image: '' 
-                },
-                { 
-                    id: 'sneakers1', 
-                    name: 'Белые кросовки', 
-                    price: 5990, 
-                    category: 'кросовки',
-                    icon: '👟',
-                    image: '' 
-                },
-                { 
-                    id: 'sneakers2', 
-                    name: 'Черные кросовки', 
-                    price: 6490, 
-                    category: 'кросовки',
-                    icon: '👟',
-                    image: '' 
-                }
+                    image: 'blob:https://web.telegram.org/b28d2628-4eb4-48bd-9aee-40b89ecdc918' // СЮДА ВСТАВЛЯЙТЕ ССЫЛКУ НА ФОТО
+                } 
             ];
 
             // Состояния
             let likedProducts = new Set();
             let cart = [];
-            let orders = []; // Все заказы всех пользователей
+            let orders = [];
             let currentCategory = 'all';
 
             // Загрузка из localStorage
@@ -1061,10 +949,7 @@
 
             function saveOrders() {
                 localStorage.setItem('orders', JSON.stringify(orders));
-                renderOrders(); // обновляем "Мои заказы"
-                if (isSeller) {
-                    renderManagement(); // обновляем "Управление"
-                }
+                renderOrders();
             }
 
             function updateCartBadge() {
@@ -1082,14 +967,6 @@
                 return 'ORD-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
             }
 
-            // ----- Показываем вкладку для продавца, если это вы -----
-            function showSellerTab() {
-                const sellerTab = document.getElementById('sellerTab');
-                if (sellerTab) {
-                    sellerTab.style.display = isSeller ? 'block' : 'none';
-                }
-            }
-
             // ----- Баннеры -----
             function renderBanners() {
                 const container = document.getElementById('bannersContainer');
@@ -1097,7 +974,7 @@
 
                 container.innerHTML = `
                     <div class="banner" onclick="showToast('📢 Акция действует до конца недели!')">
-                        <div class="banner-title">НОВОСТИ QQ</div>
+                        <div class="banner-title">НОВОСТИ D&B</div>
                         <div class="banner-subtitle">Пополнение коллекции</div>
                         <div class="banner-discount">-20%</div>
                         <div class="banner-small-text">на новые футболки и джинсы</div>
@@ -1173,9 +1050,11 @@
 
                     let imageHtml = '';
                     if (product.image && product.image.trim() !== '') {
+                        // Если есть ссылка на фото - показываем его
                         imageHtml = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`;
                         imageHtml += `<div class="placeholder-svg" style="display:none;"><svg viewBox="0 0 40 44" fill="none"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg></div>`;
                     } else {
+                        // Если фото нет - показываем заглушку
                         imageHtml = `<div class="placeholder-svg"><svg viewBox="0 0 40 44" fill="none"><rect x="4" y="6" width="32" height="32" rx="8" fill="#eaeaea"/><path d="M12 16 L28 16 L26 30 L14 30 L12 16Z" fill="#d0d0d0" opacity="0.8"/><circle cx="20" cy="24" r="4" fill="#b0b0b0"/></svg></div>`;
                     }
 
@@ -1392,7 +1271,7 @@
 
                         // Отправляем уведомление продавцу
                         const message = `
-🛍 <b>Новый заказ в QQ!</b>
+🛍 <b>Новый заказ в D&B!</b>
 
 🧾 Товары:
 ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`).join('\n')}
@@ -1481,12 +1360,11 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                 }
             }
 
-            // ----- Мои заказы (покупатель видит только свои) -----
+            // ----- Мои заказы -----
             function renderOrders() {
                 const container = document.getElementById('ordersContainer');
                 if (!container) return;
 
-                // Фильтруем заказы только текущего пользователя
                 const myOrders = orders.filter(order => order.user && order.user.id === user?.id);
 
                 if (myOrders.length === 0) {
@@ -1496,8 +1374,7 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
 
                 let html = '';
                 myOrders.forEach(order => {
-                    const statusClass = order.status === 'pending' ? 'status-pending' : 
-                                       order.status === 'confirmed' ? 'status-confirmed' : 'status-sold';
+                    const statusClass = 'status-pending';
 
                     html += `
                         <div class="order-item" data-order-id="${order.id}">
@@ -1524,88 +1401,6 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                 container.innerHTML = html;
             }
 
-            // ----- Управление заказами (продавец видит ВСЕ заказы) -----
-            function renderManagement() {
-                const container = document.getElementById('managementContainer');
-                if (!container) return;
-
-                if (orders.length === 0) {
-                    container.innerHTML = '<div class="empty-management">📦 Пока нет ни одного заказа</div>';
-                    return;
-                }
-
-                let html = '';
-                orders.forEach(order => {
-                    const statusClass = order.status === 'pending' ? 'status-pending' : 
-                                       order.status === 'confirmed' ? 'status-confirmed' : 'status-sold';
-                    
-                    // Информация о покупателе
-                    const buyerInfo = order.user ? 
-                        `👤 ${order.user.first_name || ''} ${order.user.last_name || ''} ${order.user.username ? '@' + order.user.username : ''} (ID: ${order.user.id})` : 
-                        '👤 Покупатель не авторизован';
-
-                    // Кнопки управления
-                    let actionButtons = '';
-                    if (order.status === 'pending') {
-                        actionButtons = `<button class="confirm-order-btn" data-order-id="${order.id}" data-action="confirm">✅ Подтвердить</button>`;
-                    } else if (order.status === 'confirmed') {
-                        actionButtons = `<button class="mark-sold-btn" data-order-id="${order.id}" data-action="sold">💰 Отметить проданным</button>`;
-                    }
-
-                    html += `
-                        <div class="management-item" data-order-id="${order.id}">
-                            <div class="management-header-item">
-                                <span class="management-order-id">${order.id}</span>
-                                <span class="management-date">${new Date(order.date).toLocaleString('ru-RU')}</span>
-                            </div>
-                            <div class="buyer-info">${buyerInfo}</div>
-                            <div class="management-products">
-                                ${order.items.map(item => `
-                                    <div class="management-product-row">
-                                        <span>${item.name} x${item.quantity}</span>
-                                        <span>${(item.price * item.quantity).toLocaleString()} ₽</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <div class="management-total">Итого: ${order.total.toLocaleString()} ₽</div>
-                            <div class="management-status">
-                                <span class="status-badge ${statusClass}">${order.statusText || order.status}</span>
-                                ${actionButtons}
-                            </div>
-                        </div>
-                    `;
-                });
-
-                container.innerHTML = html;
-
-                // Обработчики кнопок для продавца
-                container.querySelectorAll('[data-action="confirm"]').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const orderId = btn.dataset.orderId;
-                        const order = orders.find(o => o.id === orderId);
-                        if (order) {
-                            order.status = 'confirmed';
-                            order.statusText = 'Подтвержден';
-                            saveOrders();
-                            showToast(`✅ Заказ ${orderId} подтвержден`, 1500);
-                        }
-                    });
-                });
-
-                container.querySelectorAll('[data-action="sold"]').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const orderId = btn.dataset.orderId;
-                        const order = orders.find(o => o.id === orderId);
-                        if (order) {
-                            order.status = 'sold';
-                            order.statusText = 'Продан';
-                            saveOrders();
-                            showToast(`💰 Заказ ${orderId} отмечен как проданный`, 1500);
-                        }
-                    });
-                });
-            }
-
             // ----- Вкладки -----
             function initTabs() {
                 const tabs = document.querySelectorAll('.tab');
@@ -1613,13 +1408,9 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                 const cartTab = document.getElementById('cart-tab');
                 const favoritesTab = document.getElementById('favorites-tab');
                 const ordersTab = document.getElementById('orders-tab');
-                const managementTab = document.getElementById('management-tab');
 
                 tabs.forEach(tab => {
                     tab.addEventListener('click', () => {
-                        // Игнорируем клик по скрытой вкладке
-                        if (tab.style.display === 'none') return;
-                        
                         const target = tab.dataset.tab;
                         tabs.forEach(t => t.classList.remove('active'));
                         tab.classList.add('active');
@@ -1628,7 +1419,6 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                         cartTab.classList.add('hidden');
                         favoritesTab.classList.add('hidden');
                         ordersTab.classList.add('hidden');
-                        if (managementTab) managementTab.classList.add('hidden');
 
                         if (target === 'catalog') {
                             catalogTab.classList.remove('hidden');
@@ -1641,9 +1431,6 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                         } else if (target === 'orders') {
                             ordersTab.classList.remove('hidden');
                             renderOrders();
-                        } else if (target === 'management' && isSeller) {
-                            managementTab.classList.remove('hidden');
-                            renderManagement();
                         }
                     });
                 });
@@ -1651,7 +1438,6 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
 
             // ----- Запуск -----
             function init() {
-                showSellerTab();
                 renderBanners();
                 renderProfile();
                 renderProducts();
@@ -1662,9 +1448,6 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
                 renderCart();
                 renderFavorites();
                 renderOrders();
-                if (isSeller) {
-                    renderManagement();
-                }
 
                 setTimeout(() => {
                     document.getElementById('splash').classList.add('hidden');
@@ -1678,4 +1461,3 @@ ${items.map(i => `• ${i.name} x${i.quantity} — ${i.price * i.quantity} ₽`)
     </script>
 </body>
 </html>
-
