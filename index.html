@@ -1052,7 +1052,7 @@
                 sizes: ['под заказ']
             },
              { 
-                id: 'tshirt2', 
+                id: 'tshirt1', 
                 name: 'Джинсы', 
                 price: 2500, 
                 category: 'джинсы',
@@ -1064,7 +1064,7 @@
                 sizes: ['под заказ']
             },
              { 
-                id: 'tshirt3', 
+                id: 'tshirt1', 
                 name: 'Джинсы', 
                 price: 2500, 
                 category: 'джинсы',
@@ -1076,7 +1076,7 @@
                 sizes: ['под заказ']
             },
              { 
-                id: 'tshirt4', 
+                id: 'tshirt1', 
                 name: 'Джинсы', 
                 price: 2500, 
                 category: 'джинсы',
@@ -1088,7 +1088,7 @@
                 sizes: ['под заказ']
             },
              { 
-                id: 'tshirt5', 
+                id: 'tshirt1', 
                 name: 'Джинсы', 
                 price: 2500, 
                 category: 'джинсы',
@@ -1547,135 +1547,204 @@
         }
 
         // ========== КОРЗИНА ==========
-        function renderCart() {
-            const container = document.getElementById('cartItemsContainer');
-            const footer = document.getElementById('cartFooter');
-            const totalSpan = document.getElementById('cartTotalPrice');
-            const clearBtn = document.getElementById('clearCartBtn');
-            const checkoutBtn = document.getElementById('checkoutBtn');
-            
-            if (!container) return;
-            
-            if (cart.length === 0) {
-                container.innerHTML = '<div class="empty-cart">🛒 В корзине пусто</div>';
-                if (footer) footer.style.display = 'none';
-                return;
-            }
-            
-            footer.style.display = 'block';
-            let html = '', total = 0;
-            
-            cart.forEach((item, idx) => {
-                const product = products.find(p => p.id === item.id);
-                if (!product) return;
-                total += product.price * item.quantity;
-                const imgUrl = (product.images && product.images[0]) || product.image || '';
-                
-                html += `
-                    <div class="cart-item" data-cart-index="${idx}">
-                        <div class="cart-item-image">
-                            ${imgUrl ? createImageHtml(imgUrl, product.name, product.icon, 'cart') : `<div style="font-size:36px;">${product.icon}</div>`}
+        // ----- Корзина с МГНОВЕННОЙ отправкой уведомлений -----
+function renderCart() {
+    const container = document.getElementById('cartItemsContainer');
+    const footer = document.getElementById('cartFooter');
+    const totalSpan = document.getElementById('cartTotalPrice');
+    const clearBtn = document.getElementById('clearCartBtn');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    
+    if (!container) return;
+    
+    if (cart.length === 0) {
+        container.innerHTML = '<div class="empty-cart">🛒 В корзине пусто</div>';
+        if (footer) footer.style.display = 'none';
+        return;
+    }
+    
+    footer.style.display = 'block';
+    let html = '', total = 0;
+    
+    cart.forEach((item, idx) => {
+        const product = products.find(p => p.id === item.id);
+        if (!product) return;
+        total += product.price * item.quantity;
+        const imgUrl = (product.images && product.images[0]) || product.image || '';
+        
+        html += `
+            <div class="cart-item" data-cart-index="${idx}">
+                <div class="cart-item-image">
+                    ${imgUrl ? createImageHtml(imgUrl, product.name, product.icon, 'cart') : `<div style="font-size:36px;">${product.icon}</div>`}
+                </div>
+                <div class="cart-item-info">
+                    <div class="cart-item-title">${product.name}</div>
+                    <div class="cart-item-price">${product.price.toLocaleString()} ₽</div>
+                    <div class="cart-item-size">Размер: ${item.size}</div>
+                    <div class="cart-item-actions">
+                        <div class="cart-item-qty">
+                            <button class="qty-btn" data-action="decr" data-index="${idx}">−</button>
+                            <span class="qty-value">${item.quantity}</span>
+                            <button class="qty-btn" data-action="incr" data-index="${idx}">+</button>
                         </div>
-                        <div class="cart-item-info">
-                            <div class="cart-item-title">${product.name}</div>
-                            <div class="cart-item-price">${product.price.toLocaleString()} ₽</div>
-                            <div class="cart-item-size">Размер: ${item.size}</div>
-                            <div class="cart-item-actions">
-                                <div class="cart-item-qty">
-                                    <button class="qty-btn" data-action="decr" data-index="${idx}">−</button>
-                                    <span class="qty-value">${item.quantity}</span>
-                                    <button class="qty-btn" data-action="incr" data-index="${idx}">+</button>
-                                </div>
-                                <span class="cart-item-remove" data-action="remove" data-index="${idx}">🗑️</span>
-                            </div>
-                        </div>
+                        <span class="cart-item-remove" data-action="remove" data-index="${idx}">🗑️</span>
                     </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-            totalSpan.textContent = total.toLocaleString() + ' ₽';
-            
-            // Обработчики
-            container.querySelectorAll('[data-action="incr"]').forEach(b => {
-                b.addEventListener('click', () => {
-                    const idx = b.dataset.index;
-                    cart[idx].quantity++;
-                    saveCart();
-                });
-            });
-            
-            container.querySelectorAll('[data-action="decr"]').forEach(b => {
-                b.addEventListener('click', () => {
-                    const idx = b.dataset.index;
-                    if (cart[idx].quantity > 1) {
-                        cart[idx].quantity--;
-                    } else {
-                        cart.splice(idx, 1);
-                    }
-                    saveCart();
-                });
-            });
-            
-            container.querySelectorAll('[data-action="remove"]').forEach(b => {
-                b.addEventListener('click', () => {
-                    const idx = b.dataset.index;
-                    cart.splice(idx, 1);
-                    saveCart();
-                    showToast('🗑️ Удалено', 1000);
-                });
-            });
-            
-            clearBtn.onclick = () => {
-                cart = [];
-                saveCart();
-                showToast('🧹 Очищено', 1500);
-            };
-            
-            checkoutBtn.onclick = async () => {
-                if (!cart.length) {
-                    showToast('Корзина пуста', 1500);
-                    return;
-                }
-                
-                const items = cart.map(i => {
-                    const p = products.find(pr => pr.id === i.id);
-                    return {
-                        id: i.id,
-                        name: p.name,
-                        price: p.price,
-                        quantity: i.quantity,
-                        size: i.size
-                    };
-                });
-                
-                const totalSum = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
-                
-                const newOrder = {
-                    id: generateOrderId(),
-                    date: new Date().toISOString(),
-                    items,
-                    total: totalSum,
-                    user: user ? {
-                        id: user.id,
-                        first_name: user.first_name,
-                        last_name: user.last_name,
-                        username: user.username
-                    } : null,
-                    status: 'pending',
-                    statusText: 'Ожидает подтверждения'
-                };
-                
-                orders.unshift(newOrder);
-                saveOrders();
-                showToast('⏳ Заказ создан', 2000);
-                
-                if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                
-                cart = [];
-                saveCart();
-            };
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+    totalSpan.textContent = total.toLocaleString() + ' ₽';
+    
+    // Обработчики кнопок количества
+    container.querySelectorAll('[data-action="incr"]').forEach(b => {
+        b.addEventListener('click', () => {
+            const idx = b.dataset.index;
+            cart[idx].quantity++;
+            saveCart();
+        });
+    });
+    
+    container.querySelectorAll('[data-action="decr"]').forEach(b => {
+        b.addEventListener('click', () => {
+            const idx = b.dataset.index;
+            if (cart[idx].quantity > 1) {
+                cart[idx].quantity--;
+            } else {
+                cart.splice(idx, 1);
+            }
+            saveCart();
+        });
+    });
+    
+    container.querySelectorAll('[data-action="remove"]').forEach(b => {
+        b.addEventListener('click', () => {
+            const idx = b.dataset.index;
+            cart.splice(idx, 1);
+            saveCart();
+            showToast('🗑️ Удалено', 1000);
+        });
+    });
+    
+    // Очистка корзины
+    clearBtn.onclick = () => {
+        cart = [];
+        saveCart();
+        showToast('🧹 Корзина очищена', 1500);
+    };
+    
+    // 🚀 МГНОВЕННОЕ ОФОРМЛЕНИЕ ЗАКАЗА
+    checkoutBtn.onclick = async () => {
+        if (!cart.length) {
+            showToast('Корзина пуста', 1500);
+            return;
         }
+
+        showToast('⏳ Оформление заказа...', 1000);
+
+        const items = cart.map(i => {
+            const p = products.find(pr => pr.id === i.id);
+            return {
+                id: i.id,
+                name: p.name,
+                price: p.price,
+                quantity: i.quantity,
+                size: i.size
+            };
+        });
+        
+        const totalSum = items.reduce((acc, i) => acc + i.price * i.quantity, 0);
+        
+        const newOrder = {
+            id: generateOrderId(),
+            date: new Date().toISOString(),
+            items,
+            total: totalSum,
+            user: user ? {
+                id: user.id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                username: user.username
+            } : null,
+            status: 'pending',
+            statusText: 'Ожидает подтверждения'
+        };
+
+        // Сохраняем заказ
+        orders.unshift(newOrder);
+        saveOrders();
+
+        // ⚡ МГНОВЕННО отправляем уведомление
+        const message = `
+🛍 <b>Новый заказ в D&B!</b>
+
+🧾 Товары:
+${items.map(i => `• ${i.name} (${i.size}) x${i.quantity} — ${i.price * i.quantity} ₽`).join('\n')}
+
+💰 Сумма: ${totalSum} ₽
+
+👤 Покупатель: ${user?.first_name || 'Неизвестно'} ${user?.last_name || ''}
+🔗 Username: ${user?.username ? '@' + user.username : 'нет'}
+🆔 ID: ${user?.id || 'неизвестно'}
+
+⏰ Время: ${new Date().toLocaleString('ru-RU')}
+🆔 Заказ: ${newOrder.id}
+        `.trim();
+
+        try {
+            if (typeof SELLER_IDS !== 'undefined' && SELLER_IDS.length > 0) {
+                // Отправляем всем продавцам параллельно
+                Promise.allSettled(
+                    SELLER_IDS.map(sellerId => 
+                        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                chat_id: sellerId, 
+                                text: message, 
+                                parse_mode: 'HTML' 
+                            })
+                        })
+                    )
+                ).then(results => {
+                    const success = results.filter(r => r.status === 'fulfilled' && r.value.ok).length;
+                    console.log(`✅ Уведомления отправлены ${success} продавцам`);
+                });
+            } else {
+                // Отправляем одному продавцу
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        chat_id: YOUR_TELEGRAM_ID, 
+                        text: message, 
+                        parse_mode: 'HTML' 
+                    })
+                });
+            }
+        } catch (error) {
+            console.error('Ошибка отправки уведомления:', error);
+        }
+
+        // Вибрация
+        if (tg?.HapticFeedback) {
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        // Очищаем корзину
+        cart = [];
+        saveCart();
+
+        // Показываем успех
+        showToast('✅ Заказ оформлен!', 2000);
+
+        // Отправляем данные в Telegram
+        if (tg && typeof tg.sendData === 'function') {
+            tg.sendData(JSON.stringify({ action: 'new_order', orderId: newOrder.id }));
+        }
+    };
+}
 
         // ========== ИЗБРАННОЕ ==========
         function renderFavorites() {
@@ -1813,4 +1882,3 @@
 </script>
 </body>
 </html>
-
