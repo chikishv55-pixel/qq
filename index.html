@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+
+
+            <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -1101,7 +1103,7 @@
                 sizes: ['под заказ']
             },
                { 
-                id: 'tshirt2', 
+                id: 'tshirt6', 
                 name: 'Джинсы', 
                 price: 2500, 
                 category: 'джинсы',
@@ -1112,10 +1114,10 @@
                 description: '',
                 sizes: ['под заказ']
             },
-                  { 
-                id: 'tshirt2', 
-                name: 'кофта', 
-                price: 2500, 
+              { 
+                id: 'tshirt7', 
+                name: 'кофта Stone island', 
+                price: 5000, 
                 category: 'кофта',
                 icon: '',
                 images: [
@@ -1125,9 +1127,24 @@
                     'https://cdn.итд.com/images/ffc36841-b747-4b9b-8c11-05318edee81b.jpg' // фото 1
                 ],
                 description: '',
-                sizes: ['под заказ']
+                sizes: ['s']
             },
-            
+            { 
+                id: 'tshirt8', 
+                name: 'штаны c.p.company ', 
+                price: 5000, 
+                category: 'штаны',
+                icon: '',
+                images: [
+                    'https://cdn.итд.com/images/539d8e2f-5464-41a7-a34a-ba0e779058bd.jpg',
+                    'https://cdn.итд.com/images/0ec3237e-e7be-4a96-b69e-70f92cc57438.jpg',
+                    'https://cdn.итд.com/images/c1b59617-49cb-4d80-9edc-8d670872c622.jpg',
+                    'https://cdn.итд.com/images/ecabeaa8-6ebc-4200-83a1-9fe715daa5dc.jpg' // фото 1
+                ],
+                description: '',
+                sizes: ['s']
+            },
+   
         ];
 
         // Состояния
@@ -1342,8 +1359,8 @@
             container.innerHTML = `
                 <div class="banner" onclick="showToast('🔥 Скидка недели!')">
                     <div class="banner-title">D&B SPECIAL</div>
-                    <div class="banner-subtitle">Вся коллекция</div>
-                    <div class="banner-discount">-20%</div>
+                    <div class="banner-subtitle">Скидка на второй заказ</div>
+                    <div class="banner-discount">-15%</div>
                     <div class="banner-small-text">по промокоду D&B</div>
                 </div>
             `;
@@ -1910,6 +1927,7 @@ ${items.map(i => `• ${i.name} (${i.size}) x${i.quantity} — ${i.price * i.qua
 </script>
 </body>
 </html>
+
 
 
 
